@@ -1,6 +1,7 @@
+using HotelApp.Persistance;
 using HotelDb.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelDb.Data
 {
@@ -32,12 +33,8 @@ namespace HotelDb.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.SeedInitialData();
 
-            modelBuilder.Entity<Room>().HasData(
-                new Room { RoomId = 1, Number = "101", Type = "Single", Price = 50, Status = "Free" },
-                new Room { RoomId = 2, Number = "102", Type = "Double", Price = 80, Status = "Free" },
-                new Room { RoomId = 3, Number = "201", Type = "Suite", Price = 150, Status = "Free" }
-            );
         }
     }
 }
