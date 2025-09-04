@@ -1,34 +1,35 @@
-@model HotelDb.Models.Room
+    @model HotelDb.Models.Room
 
 @{
     ViewData["Title"] = "Видалити номер";
     Layout = "_Layout";
 }
 
-<section class="delete-section">
+<section class="delete-section py-4">
     <div class="container">
-        <h1 class="text-center mb-4">Видалити номер</h1>
+        <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Видалити номер</h1>
         <h3 class="text-center mb-4">Ви впевнені, що хочете видалити цей номер?</h3>
-        <hr />
         <div class="row">
             <div class="col-md-6 mx-auto">
-                <dl class="dl-horizontal">
-                    <dt>Номер кімнати</dt>
-                    <dd>@Model.Number</dd>
-                    <dt>Тип</dt>
-                    <dd>@Model.Type</dd>
-                    <dt>Ціна</dt>
-                    <dd>@Model.Price грн/ніч</dd>
-                    <dt>Статус</dt>
-                    <dd>@(Model.Status == "Free" ? "Вільний" : "Заброньовано")</dd>
-                </dl>
-                <form asp-action="Delete">
-                    <input type="hidden" asp-for="RoomId" />
-                    <div class="text-center">
-                        <input type="submit" value="Видалити" class="btn btn-danger" />
-                        <a asp-action="Index" class="btn btn-dark ms-2">Назад до списку</a>
-                    </div>
-                </form>
+                <div class="card bg-dark text-white shadow rounded p-4">
+                    <dl class="row">
+                        <dt class="col-sm-5">Номер кімнати</dt>
+                        <dd class="col-sm-7">@Model.Number</dd>
+                        <dt class="col-sm-5">Тип</dt>
+                        <dd class="col-sm-7">@Model.Type</dd>
+                        <dt class="col-sm-5">Ціна</dt>
+                        <dd class="col-sm-7">@Model.Price грн/ніч</dd>
+                        <dt class="col-sm-5">Статус</dt>
+                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Вільний" : "Заброньовано")</dd>
+                    </dl>
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="RoomId" />
+                        <div class="text-center">
+                            <input type="submit" value="Видалити" class="btn btn-danger" />
+                            <a asp-action="Index" class="btn btn-outline-light ms-2">Назад до списку</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
