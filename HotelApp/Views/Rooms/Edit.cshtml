@@ -1,13 +1,13 @@
 @model HotelDb.Models.Room
 
 @{
-    ViewData["Title"] = "Редагувати номер";
+    ViewData["Title"] = "Edit Room";
     Layout = "_Layout";
 }
 
 <section class="form-section">
     <div class="container">
-        <h1 class="text-center mb-4">Редагувати номер</h1>
+        <h1 class="text-center mb-4">Edit Room</h1>
         <hr />
         <div class="row">
             <div class="col-md-4 mx-auto">
@@ -15,13 +15,13 @@
                     <input type="hidden" asp-for="RoomId" />
                     @await Html.PartialAsync("_RoomForm", Model)
                     <div class="form-group text-center">
-                        <input type="submit" value="Зберегти" class="btn btn-primary" />
+                        <input type="submit" value="Save" class="btn btn-primary" />
                     </div>
                 </form>
             </div>
         </div>
         <div class="text-center mt-3">
-            <a class="btn btn-dark" asp-action="Index">Назад до списку</a>
+            <a class="btn btn-dark" asp-action="Index">Back to List</a>
         </div>
     </div>
 </section>

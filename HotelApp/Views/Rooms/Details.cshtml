@@ -1,30 +1,30 @@
-    @model HotelDb.Models.Room
+@model HotelDb.Models.Room
 
 @{
-    ViewData["Title"] = "Деталі номеру";
+    ViewData["Title"] = "Room Details";
     Layout = "_Layout";
 }
 
 <section class="details-section py-4">
     <div class="container">
-        <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Деталі номеру</h1>
+        <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Room Details</h1>
         <div class="row">
             <div class="col-md-6 mx-auto">
                 <div class="card bg-dark text-white shadow rounded p-4">
                     <dl class="row">
-                        <dt class="col-sm-5">Номер кімнати</dt>
+                        <dt class="col-sm-5">Room Number</dt>
                         <dd class="col-sm-7">@Model.Number</dd>
-                        <dt class="col-sm-5">Тип</dt>
+                        <dt class="col-sm-5">Type</dt>
                         <dd class="col-sm-7">@Model.Type</dd>
-                        <dt class="col-sm-5">Ціна</dt>
-                        <dd class="col-sm-7">@Model.Price грн/ніч</dd>
-                        <dt class="col-sm-5">Статус</dt>
-                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Вільний" : "Заброньовано")</dd>
+                        <dt class="col-sm-5">Price</dt>
+                        <dd class="col-sm-7">@Model.Price UAH/night</dd>
+                        <dt class="col-sm-5">Status</dt>
+                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
                     </dl>
                     <div class="text-center mt-4">
-                        <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Редагувати</a>
-                        <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Видалити</a>
-                        <a asp-action="Index" class="btn btn-outline-light">Назад до списку</a>
+                        <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
+                        <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
                     </div>
                 </div>
             </div>

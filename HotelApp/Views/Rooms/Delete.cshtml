@@ -1,32 +1,32 @@
-    @model HotelDb.Models.Room
+@model HotelDb.Models.Room
 
 @{
-    ViewData["Title"] = "Видалити номер";
+    ViewData["Title"] = "Delete Room";
     Layout = "_Layout";
 }
 
 <section class="delete-section py-4">
     <div class="container">
-        <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Видалити номер</h1>
-        <h3 class="text-center mb-4">Ви впевнені, що хочете видалити цей номер?</h3>
+        <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Delete Room</h1>
+        <h3 class="text-center mb-4">Are you sure you want to delete this room?</h3>
         <div class="row">
             <div class="col-md-6 mx-auto">
                 <div class="card bg-dark text-white shadow rounded p-4">
                     <dl class="row">
-                        <dt class="col-sm-5">Номер кімнати</dt>
+                        <dt class="col-sm-5">Room Number</dt>
                         <dd class="col-sm-7">@Model.Number</dd>
-                        <dt class="col-sm-5">Тип</dt>
+                        <dt class="col-sm-5">Type</dt>
                         <dd class="col-sm-7">@Model.Type</dd>
-                        <dt class="col-sm-5">Ціна</dt>
-                        <dd class="col-sm-7">@Model.Price грн/ніч</dd>
-                        <dt class="col-sm-5">Статус</dt>
-                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Вільний" : "Заброньовано")</dd>
+                        <dt class="col-sm-5">Price</dt>
+                        <dd class="col-sm-7">@Model.Price UAH/night</dd>
+                        <dt class="col-sm-5">Status</dt>
+                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
                     </dl>
                     <form asp-action="Delete">
                         <input type="hidden" asp-for="RoomId" />
                         <div class="text-center">
-                            <input type="submit" value="Видалити" class="btn btn-danger" />
-                            <a asp-action="Index" class="btn btn-outline-light ms-2">Назад до списку</a>
+                            <input type="submit" value="Delete" class="btn btn-danger" />
+                            <a asp-action="Index" class="btn btn-outline-light ms-2">Back to List</a>
                         </div>
                     </form>
                 </div>
