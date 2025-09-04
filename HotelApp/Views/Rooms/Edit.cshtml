@@ -1,0 +1,31 @@
+@model HotelDb.Models.Room
+
+@{
+    ViewData["Title"] = "Редагувати номер";
+    Layout = "_Layout";
+}
+
+<section class="form-section">
+    <div class="container">
+        <h1 class="text-center mb-4">Редагувати номер</h1>
+        <hr />
+        <div class="row">
+            <div class="col-md-4 mx-auto">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="RoomId" />
+                    @await Html.PartialAsync("_RoomForm", Model)
+                    <div class="form-group text-center">
+                        <input type="submit" value="Зберегти" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a class="btn btn-dark" asp-action="Index">Назад до списку</a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

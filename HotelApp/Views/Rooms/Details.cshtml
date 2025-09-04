@@ -1,0 +1,32 @@
+@model HotelDb.Models.Room
+
+@{
+    ViewData["Title"] = "Деталі номеру";
+    Layout = "_Layout";
+}
+
+<section class="details-section">
+    <div class="container">
+        <h1 class="text-center mb-4">Деталі номеру</h1>
+        <hr />
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <dl class="dl-horizontal">
+                    <dt>Номер кімнати</dt>
+                    <dd>@Model.Number</dd>
+                    <dt>Тип</dt>
+                    <dd>@Model.Type</dd>
+                    <dt>Ціна</dt>
+                    <dd>@Model.Price грн/ніч</dd>
+                    <dt>Статус</dt>
+                    <dd>@(Model.Status == "Free" ? "Вільний" : "Заброньовано")</dd>
+                </dl>
+                <div class="text-center mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-primary">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Видалити</a>
+                    <a asp-action="Index" class="btn btn-dark">Назад до списку</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

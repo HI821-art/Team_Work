@@ -1,0 +1,33 @@
+@model IEnumerable<HotelDb.Models.Room>
+
+    @{
+    ViewData["Title"] = "Номери";
+    Layout = "_Layout";
+    }
+
+    <section class="rooms-section">
+        <div class="container">
+            <h2 class="text-center mb-4">Наші номери</h2>
+            <div class="text-end mb-3">
+                <a asp-action="Create" class="btn btn-primary">Створити новий номер</a>
+            </div>
+            <div class="row">
+                @foreach (var room in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card room-card" style="background-color: #2c2c2c; border: none;">
+                        @*@ <img src="/images/room-@room.type.tolower().jpg" class="card-img-top" alt="@room.type" style="height: 200px; object-fit: cover;"> *@
+                        <div class="card-body">
+                            <h5 class="card-title">@room.Type (Номер: @room.Number)</h5>
+                            <p class="card-text">Ціна: @room.Price грн/ніч</p>
+                            <p class="card-text">Статус: @(room.Status == "Free" ? "Вільний" : "Заброньовано")</p>
+                            <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-primary">Деталі</a>
+                            <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Редагувати</a>
+                            <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Видалити</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </section>
