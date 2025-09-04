@@ -1,0 +1,32 @@
+@model IEnumerable<HotelDb.Models.Room>
+
+    @{
+    ViewData["Title"] = "Rooms";
+    Layout = "_Layout";
+    }
+
+    <section class="rooms-section py-4">
+        <div class="container">
+            <h2 class="text-center mb-4 fw-bold text-white">Our Rooms</h2>
+            <div class="text-end mb-3">
+                <a asp-action="Create" class="btn btn-primary">Create New Room</a>
+            </div>
+            <div class="row">
+                @foreach (var room in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card room-card shadow-lg rounded-4 bg-dark border-0 text-white">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
+                            <p class="card-text">Price: @room.Price UAH/night</p>
+                            <p class="card-text">Status: @(room.Status == "Free" ? "Available" : "Booked")</p>
+                            <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-light">Details</a>
+                            <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </section>
