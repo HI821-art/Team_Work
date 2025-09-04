@@ -1,8 +1,78 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IEnumerable<HotelDb.Models.Room>
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <section class="text-center mb-5">
+        <h2 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif;">Welcome to HotelApp</h2>
+        <p class="lead text-muted">
+            Experience comfort and elegance in the heart of the city.
+            Our rooms and services are designed to make your stay unforgettable.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h3 class="fw-bold text-center mb-4" style="font-family: 'Playfair Display', serif;">Our Rooms</h3>
+        <div class="row">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var room in Model.Take(3))
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <img src="~/images/room-sample.jpg" class="card-img-top" alt="@room.Type">
+                            <div class="card-body">
+                                <h5 class="card-title">@room.Type Room</h5>
+                                <p class="card-text">Room № @room.Number</p>
+                                <p><strong>$@room.Price / night</strong></p>
+                                <a href="@Url.Action("Details", "Rooms", new { id = room.RoomId })" class="btn btn-dark">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center">No rooms available.</p>
+            }
+        </div>
+        <div class="text-center mt-3">
+            <a href="/Rooms" class="btn btn-outline-dark">View All Rooms</a>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h3 class="fw-bold text-center mb-4" style="font-family: 'Playfair Display', serif;">Our Services</h3>
+        <div class="row text-center">
+            <div class="col-md-4 mb-3">
+                <div class="card p-4">
+                    <h5 class="card-title">Spa & Wellness</h5>
+                    <p class="text-muted">Relax and rejuvenate with our luxury spa treatments.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-4">
+                    <h5 class="card-title">Fine Dining</h5>
+                    <p class="text-muted">Enjoy world-class cuisine prepared by top chefs.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-4">
+                    <h5 class="card-title">Conference Halls</h5>
+                    <p class="text-muted">Modern facilities for business meetings and events.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="text-center">
+        <h3 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif;">About Us</h3>
+        <p class="lead text-muted">
+            HotelApp combines modern elegance with exceptional service.
+            Whether you’re here for business or leisure, we ensure an unforgettable experience.
+        </p>
+        <a href="/Reservations" class="btn btn-dark">Make a Reservation</a>
+    </section>
 </div>
