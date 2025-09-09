@@ -6,10 +6,10 @@ namespace HotelDb.Models
     {
         public int RoomId { get; set; }
         public string Number { get; set; }
-        public string Type { get; set; } // Single, Double, Presidental
+        public string Type { get; set; }
         public double Price { get; set; }
-        public string Status { get; set; } // Free / Booked
+        public string Status { get; set; }
 
-        public ICollection<Reservation> Reservations { get; set; }
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
