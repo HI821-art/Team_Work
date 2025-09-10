@@ -1,5 +1,6 @@
 using HotelApp.Persistance;
 using HotelDb.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +16,8 @@ namespace HotelDb.Data
 
         public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options)
         {
-            // this.Database.EnsureDeleted();
-            // this.Database.EnsureCreated();
+            //this.Database.EnsureDeleted();
+           // this.Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
