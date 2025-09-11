@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialData : Migration
+    public partial class AddBirthdateToUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +33,7 @@ namespace HotelApp.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -115,8 +116,8 @@ namespace HotelApp.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -160,8 +161,8 @@ namespace HotelApp.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -231,9 +232,12 @@ namespace HotelApp.Migrations
                 columns: new[] { "RoomId", "Number", "Price", "Status", "Type" },
                 values: new object[,]
                 {
-                    { 1, "101", 50.0, "Free", "Single" },
-                    { 2, "102", 80.0, "Free", "Double" },
-                    { 3, "201", 150.0, "Free", "Suite" }
+                    { 1, "101", 1500.0, "Free", "Single" },
+                    { 2, "202", 2500.0, "Free", "Double" },
+                    { 3, "303", 5000.0, "Booked", "Presidental" },
+                    { 4, "104", 1800.0, "Booked", "Single" },
+                    { 5, "205", 2800.0, "Free", "Double" },
+                    { 6, "306", 5500.0, "Free", "Presidental" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -4,6 +4,7 @@ using HotelDb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelApp.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250910102800_AddBirthdateToUser")]
+    partial class AddBirthdateToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,9 +96,6 @@ namespace HotelApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -166,28 +166,6 @@ namespace HotelApp.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HotelDb.Models.RoomImage", b =>
-                {
-                    b.Property<int>("RoomImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomImageId"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoomImageId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomImages");
-                });
-
             modelBuilder.Entity("HotelDb.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -211,6 +189,7 @@ namespace HotelApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -426,17 +405,6 @@ namespace HotelApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HotelDb.Models.RoomImage", b =>
-                {
-                    b.HasOne("HotelDb.Models.Room", "Room")
-                        .WithMany("Images")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -496,8 +464,6 @@ namespace HotelApp.Migrations
 
             modelBuilder.Entity("HotelDb.Models.Room", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("Reservations");
                 });
 

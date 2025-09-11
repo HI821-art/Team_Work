@@ -8,7 +8,11 @@ namespace HotelDb.Models
         public string Number { get; set; }
         public string Type { get; set; } // Single, Double, Presidential
         public double Price { get; set; }
-        public string Status { get; set; } // Free / Booked
+        public string Status { get; set; } 
+
+        public string? Description { get; set; }
+
+        public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
 
         public string? Description { get; set; }
 
@@ -26,3 +30,4 @@ namespace HotelDb.Models
         public Room Room { get; set; }
     }
 }
+

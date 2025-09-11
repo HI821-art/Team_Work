@@ -99,13 +99,13 @@ namespace HotelApp.Controllers
             }
         };
 
-        // Read: Список номерів
+     
         public IActionResult Index()
         {
             return View(_rooms);
         }
 
-        // Details: Деталі номеру
+        
         public IActionResult Details(int id)
         {
             var room = _rooms.FirstOrDefault(r => r.RoomId == id);
@@ -116,7 +116,7 @@ namespace HotelApp.Controllers
             return View(room);
         }
 
-        // Create: Форма створення
+        
         [HttpGet]
         public IActionResult Create()
         {
@@ -136,7 +136,6 @@ namespace HotelApp.Controllers
             return View(room);
         }
 
-        // Edit: Форма редагування
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -174,7 +173,7 @@ namespace HotelApp.Controllers
             return View(room);
         }
 
-        // Delete: Підтвердження видалення
+       
         [HttpGet]
         public IActionResult Delete(int id)
         {

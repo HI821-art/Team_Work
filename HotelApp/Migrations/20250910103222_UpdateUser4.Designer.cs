@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelApp.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20250903100756_InitialData")]
-    partial class InitialData
+    [Migration("20250910103222_UpdateUser4")]
+    partial class UpdateUser4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -120,25 +120,49 @@ namespace HotelApp.Migrations
                         {
                             RoomId = 1,
                             Number = "101",
-                            Price = 50.0,
+                            Price = 1500.0,
                             Status = "Free",
                             Type = "Single"
                         },
                         new
                         {
                             RoomId = 2,
-                            Number = "102",
-                            Price = 80.0,
+                            Number = "202",
+                            Price = 2500.0,
                             Status = "Free",
                             Type = "Double"
                         },
                         new
                         {
                             RoomId = 3,
-                            Number = "201",
-                            Price = 150.0,
+                            Number = "303",
+                            Price = 5000.0,
+                            Status = "Booked",
+                            Type = "Presidental"
+                        },
+                        new
+                        {
+                            RoomId = 4,
+                            Number = "104",
+                            Price = 1800.0,
+                            Status = "Booked",
+                            Type = "Single"
+                        },
+                        new
+                        {
+                            RoomId = 5,
+                            Number = "205",
+                            Price = 2800.0,
                             Status = "Free",
-                            Type = "Suite"
+                            Type = "Double"
+                        },
+                        new
+                        {
+                            RoomId = 6,
+                            Number = "306",
+                            Price = 5500.0,
+                            Status = "Free",
+                            Type = "Presidental"
                         });
                 });
 
@@ -149,6 +173,9 @@ namespace HotelApp.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Birthdate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -162,7 +189,6 @@ namespace HotelApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -291,10 +317,12 @@ namespace HotelApp.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -331,10 +359,12 @@ namespace HotelApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
