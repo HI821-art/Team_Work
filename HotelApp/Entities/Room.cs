@@ -10,13 +10,11 @@ namespace HotelDb.Models
         public double Price { get; set; }
         public string Status { get; set; } 
 
-        public string? Description { get; set; }
+        public string? Description { get; set; }// remove dublicate
 
         public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
 
-        public string? Description { get; set; }
-
-        public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
+        
 
         public ICollection<Reservation> Reservations { get; set; }
     }
@@ -27,7 +25,6 @@ namespace HotelDb.Models
         public string ImageUrl { get; set; }
 
         public int RoomId { get; set; }
-        public Room Room { get; set; }
-    }
+        public Room Room { get; set; }    }
 }
 
