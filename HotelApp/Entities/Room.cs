@@ -10,7 +10,7 @@ namespace HotelDb.Models
         public double Price { get; set; }
         public string Status { get; set; } 
 
-        public string? Description { get; set; }
+        public string? Description { get; set; }// remove dublicate
 
         public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
 
