@@ -14,10 +14,6 @@ namespace HotelDb.Models
 
         public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
 
-        public string? Description { get; set; }
-
-        public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
-
         public ICollection<Reservation> Reservations { get; set; }
     }
 
