@@ -9,12 +9,94 @@ namespace HotelApp.Controllers
     {
         private static List<Room> _rooms = new List<Room>
         {
-            new Room { RoomId = 1, Number = "101", Type = "Single", Price = 1500.00, Status = "Free" },
-            new Room { RoomId = 2, Number = "202", Type = "Double", Price = 2500.00, Status = "Free" },
-            new Room { RoomId = 3, Number = "303", Type = "Presidental", Price = 5000.00, Status = "Booked" },
-            new Room { RoomId = 4, Number = "104", Type = "Single", Price = 1800.00, Status = "Booked" },
-            new Room { RoomId = 5, Number = "205", Type = "Double", Price = 2800.00, Status = "Free" },
-            new Room { RoomId = 6, Number = "306", Type = "Presidental", Price = 5500.00, Status = "Free" }
+            new Room
+            {
+                RoomId = 1,
+                Number = "101",
+                Type = "Single",
+                Price = 1500.00,
+                Status = "Free",
+                Description = "Cozy single room with a balcony and city view.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 1, ImageUrl = "/images/rooms/101_1.jpg" },
+                }
+            },
+            new Room
+            {
+                RoomId = 2,
+                Number = "202",
+                Type = "Double",
+                Price = 2500.00,
+                Status = "Free",
+                Description = "Spacious double room with modern design and a large bed.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 3, ImageUrl = "/images/rooms/202_1.jpg" },
+                    new RoomImage { RoomImageId = 4, ImageUrl = "/images/rooms/202_2.jpg" }
+                }
+            },
+            new Room
+            {
+                RoomId = 3,
+                Number = "303",
+                Type = "Presidental",
+                Price = 5000.00,
+                Status = "Booked",
+                Description = "Luxury presidential suite with premium facilities and panoramic city view.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 5, ImageUrl = "/images/rooms/303_1.jpg" },
+                    new RoomImage { RoomImageId = 6, ImageUrl = "/images/rooms/303_2.jpg" },
+                    new RoomImage { RoomImageId = 7, ImageUrl = "/images/rooms/303_3.jpg" }
+                }
+            },
+            new Room
+            {
+                RoomId = 4,
+                Number = "104",
+                Type = "Single",
+                Price = 1800.00,
+                Status = "Booked",
+                Description = "Comfortable single room with a minimalist interior, perfect for short stays.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 8, ImageUrl = "/images/rooms/104_1.jpg" },
+                    new RoomImage { RoomImageId = 9, ImageUrl = "/images/rooms/104_2.jpg" }
+                }
+            },
+            new Room
+            {
+                RoomId = 5,
+                Number = "205",
+                Type = "Double",
+                Price = 2800.00,
+                Status = "Free",
+                Description = "Modern double room with bright colors and a relaxing atmosphere.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 10, ImageUrl = "/images/rooms/205_1.jpg" },
+                    new RoomImage { RoomImageId = 11, ImageUrl = "/images/rooms/205_2.jpg" }
+                }
+            },
+            new Room
+            {
+                RoomId = 6,
+                Number = "306",
+                Type = "Presidental",
+                Price = 5500.00,
+                Status = "Free",
+                Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.",
+                Images = new List<RoomImage>
+                {
+                    new RoomImage { RoomImageId = 12, ImageUrl = "/images/rooms/306_1.jpg" },
+                    new RoomImage { RoomImageId = 13, ImageUrl = "/images/rooms/306_2.jpg" },
+                    new RoomImage { RoomImageId = 14, ImageUrl = "/images/rooms/306_3.jpg" },
+                    new RoomImage { RoomImageId = 15, ImageUrl = "/images/rooms/306_4.jpg" },
+                    new RoomImage { RoomImageId = 16, ImageUrl = "/images/rooms/306_5.jpg" },
+                    new RoomImage { RoomImageId = 17, ImageUrl = "/images/rooms/306_6.jpg" },
+                }
+            }
         };
 
         // Read: Список номерів
@@ -86,6 +168,7 @@ namespace HotelApp.Controllers
                 existingRoom.Type = room.Type;
                 existingRoom.Price = room.Price;
                 existingRoom.Status = room.Status;
+                existingRoom.Description = room.Description;
                 return RedirectToAction(nameof(Index));
             }
             return View(room);

@@ -1,21 +1,28 @@
 @model IEnumerable<HotelDb.Models.Room>
 
-    @{
+@{
     ViewData["Title"] = "Rooms";
     Layout = "_Layout";
-    }
+}
 
-    <section class="rooms-section py-4">
-        <div class="container">
-            <h2 class="text-center mb-4 fw-bold text-white">Our Rooms</h2>
-            <div class="text-end mb-3">
-                <a asp-action="Create" class="btn btn-primary">Create New Room</a>
-            </div>
-            <div class="row">
-                @foreach (var room in Model)
+<section class="rooms-section py-4">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold text-white">Our Rooms</h2>
+        <div class="text-end mb-3">
+            <a asp-action="Create" class="btn btn-primary">Create New Room</a>
+        </div>
+        <div class="row">
+            @foreach (var room in Model)
             {
                 <div class="col-md-4 mb-4">
                     <div class="card room-card shadow-lg rounded-4 bg-dark border-0 text-white">
+
+                        @* Основне фото кімнати *@
+                        @{
+                            var mainImage = room.Images?.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg";
+                        }
+                        <img src="@mainImage" class="card-img-top rounded-top-4" style="height:200px; object-fit:cover;" alt="Room @room.Number" />
+
                         <div class="card-body">
                             <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
                             <p class="card-text">Price: @room.Price UAH/night</p>
@@ -27,6 +34,6 @@
                     </div>
                 </div>
             }
-            </div>
         </div>
-    </section>
+    </div>
+</section>

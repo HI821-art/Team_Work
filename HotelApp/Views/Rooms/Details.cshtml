@@ -1,4 +1,5 @@
 @model HotelDb.Models.Room
+@using System.Linq
 
 @{
     ViewData["Title"] = "Room Details";
@@ -8,25 +9,56 @@
 <section class="details-section py-4">
     <div class="container">
         <h1 class="text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif;">Room Details</h1>
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                <div class="card bg-dark text-white shadow rounded p-4">
-                    <dl class="row">
-                        <dt class="col-sm-5">Room Number</dt>
-                        <dd class="col-sm-7">@Model.Number</dd>
-                        <dt class="col-sm-5">Type</dt>
-                        <dd class="col-sm-7">@Model.Type</dd>
-                        <dt class="col-sm-5">Price</dt>
-                        <dd class="col-sm-7">@Model.Price UAH/night</dd>
-                        <dt class="col-sm-5">Status</dt>
-                        <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
-                    </dl>
-                    <div class="text-center mt-4">
-                        <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
-                        <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="card shadow rounded">
+                    @* ќсновне фото (використовуЇмо перше з Images або placeholder) *@
+                    @{
+                        var mainImage = Model.Images?.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg";
+                        var altText = $"Room {Model.Number}";
+                    }
+                    <img id="mainRoomImage" src="@mainImage" class="card-img-top img-fluid" alt="@altText"
+                         style="object-fit: cover; max-height: 450px; width:100%;" />
+
+                    <div class="card-body bg-dark text-white">
+                        <h4 class="card-title mb-2">@Model.Number &nbsp; Ч &nbsp; @Model.Type</h4>
+
+                        <p class="card-text">@Model.Description</p>
+
+                        <dl class="row">
+                            <dt class="col-sm-5">Price</dt>
+                            <dd class="col-sm-7">@($"{Model.Price:N0} UAH / night")</dd>
+
+                            <dt class="col-sm-5">Status</dt>
+                            <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
+                        </dl>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
+                            <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
+                        </div>
                     </div>
                 </div>
+
+                @* Thumbnails (€кщо Ї б≥льше 1 фото) *@
+                @if (Model.Images != null && Model.Images.Count > 1)
+                {
+                    <div class="mt-3 d-flex gap-2 justify-content-center flex-wrap">
+                        @foreach (var im in Model.Images)
+                        {
+                            <img src="@im.ImageUrl"
+                                 class="rounded shadow-sm"
+                                 style="width:120px; height:80px; object-fit:cover; cursor:pointer; border:2px solid transparent;"
+                                 onclick="document.getElementById('mainRoomImage').src='@im.ImageUrl';"
+                                 onmouseover="this.style.borderColor='rgba(255,255,255,0.6)';"
+                                 onmouseout="this.style.borderColor='transparent';"
+                                 alt="Thumbnail" />
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -13,6 +13,8 @@ namespace HotelDb.Data
 
         public HotelDbContext() { }
 
+        public DbSet<RoomImage> RoomImages { get; set; }
+
         public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options)
         {
             // this.Database.EnsureDeleted();
