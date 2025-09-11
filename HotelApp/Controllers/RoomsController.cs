@@ -20,6 +20,7 @@ namespace HotelApp.Controllers
                 Images = new List<RoomImage>
                 {
                     new RoomImage { RoomImageId = 1, ImageUrl = "/images/rooms/101_1.jpg" },
+                    new RoomImage { RoomImageId = 2, ImageUrl = "/images/rooms/101_2.jpg" }
                 }
             },
             new Room
@@ -29,11 +30,12 @@ namespace HotelApp.Controllers
                 Type = "Double",
                 Price = 2500.00,
                 Status = "Free",
-                Description = "Spacious double room with modern design and a large bed.",
+                Description = "Spacious double room with modern design and large beds.",
                 Images = new List<RoomImage>
                 {
                     new RoomImage { RoomImageId = 3, ImageUrl = "/images/rooms/202_1.jpg" },
-                    new RoomImage { RoomImageId = 4, ImageUrl = "/images/rooms/202_2.jpg" }
+                    new RoomImage { RoomImageId = 4, ImageUrl = "/images/rooms/202_2.jpg" },
+                    new RoomImage { RoomImageId = 20, ImageUrl = "/images/rooms/202_3.jpg" },
                 }
             },
             new Room
@@ -48,7 +50,9 @@ namespace HotelApp.Controllers
                 {
                     new RoomImage { RoomImageId = 5, ImageUrl = "/images/rooms/303_1.jpg" },
                     new RoomImage { RoomImageId = 6, ImageUrl = "/images/rooms/303_2.jpg" },
-                    new RoomImage { RoomImageId = 7, ImageUrl = "/images/rooms/303_3.jpg" }
+                    new RoomImage { RoomImageId = 17, ImageUrl = "/images/rooms/303_6.jpg" },
+                    new RoomImage { RoomImageId = 18, ImageUrl = "/images/rooms/303_4.jpg" },
+                    new RoomImage { RoomImageId = 19, ImageUrl = "/images/rooms/303_5.jpg" },
                 }
             },
             new Room
@@ -76,7 +80,8 @@ namespace HotelApp.Controllers
                 Images = new List<RoomImage>
                 {
                     new RoomImage { RoomImageId = 10, ImageUrl = "/images/rooms/205_1.jpg" },
-                    new RoomImage { RoomImageId = 11, ImageUrl = "/images/rooms/205_2.jpg" }
+                    new RoomImage { RoomImageId = 11, ImageUrl = "/images/rooms/205_2.jpg" },
+                    new RoomImage { RoomImageId = 21, ImageUrl = "/images/rooms/205_3.jpg" }
                 }
             },
             new Room
@@ -94,7 +99,6 @@ namespace HotelApp.Controllers
                     new RoomImage { RoomImageId = 14, ImageUrl = "/images/rooms/306_3.jpg" },
                     new RoomImage { RoomImageId = 15, ImageUrl = "/images/rooms/306_4.jpg" },
                     new RoomImage { RoomImageId = 16, ImageUrl = "/images/rooms/306_5.jpg" },
-                    new RoomImage { RoomImageId = 17, ImageUrl = "/images/rooms/306_6.jpg" },
                 }
             }
         };
