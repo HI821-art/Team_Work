@@ -13,6 +13,8 @@ namespace HotelDb.Models
 
         public string? Description { get; set; }// remove dublicate
 
+        public string? Amenities { get; set; }
+
         public ICollection<RoomImage> Images { get; set; } = new List<RoomImage>();
 
         

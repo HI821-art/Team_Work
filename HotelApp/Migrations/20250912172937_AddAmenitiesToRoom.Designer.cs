@@ -4,6 +4,7 @@ using HotelDb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelApp.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250912172937_AddAmenitiesToRoom")]
+    partial class AddAmenitiesToRoom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +96,9 @@ namespace HotelApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
 
+                    b.Property<string>("Amenities")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
@@ -122,6 +128,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 1,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower",
                             Capacity = 2,
                             Description = "Cozy single room with a balcony and city view.",
                             Number = "101",
@@ -132,6 +139,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 2,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor",
                             Capacity = 4,
                             Description = "Spacious double room with modern design and large beds.",
                             Number = "202",
@@ -142,6 +150,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 3,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano",
                             Capacity = 2,
                             Description = "Luxury presidential suite with premium facilities and panoramic city view.",
                             Number = "303",
@@ -152,6 +161,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 4,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower",
                             Capacity = 2,
                             Description = "Comfortable single room with a minimalist interior, perfect for short stays.",
                             Number = "104",
@@ -162,6 +172,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 5,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor",
                             Capacity = 4,
                             Description = "Modern double room with bright colors and a relaxing atmosphere.",
                             Number = "205",
@@ -172,6 +183,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 6,
+                            Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano",
                             Capacity = 2,
                             Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.",
                             Number = "306",

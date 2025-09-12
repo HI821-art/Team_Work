@@ -25,7 +25,27 @@
                     <div class="card-body bg-dark text-white">
                         <h4 class="card-title mb-2">@Model.Number &nbsp; — &nbsp; @Model.Type</h4>
 
+                        <h4 class="card-title mb-2"></h4>
+
                         <p class="card-text">@Model.Description</p>
+
+                        @if (!string.IsNullOrEmpty(Model.Amenities))
+                        {
+                            <div class="mt-3">
+                                <h6 class="fw-bold">Amenities:</h6>
+                                <div class="row">
+                                    @foreach (var amenity in Model.Amenities.Split(',', System.StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <div class="col-6 mb-2 d-flex align-items-start">
+                                            <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                            <span class="card-text">@amenity.Trim()</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <h4 class="card-title mb-2"></h4>
 
                         <dl class="row">
                             <dt class="col-sm-5">Price</dt>
@@ -33,6 +53,9 @@
 
                             <dt class="col-sm-5">Status</dt>
                             <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
+
+                            <dt class="col-sm-5">Capacity</dt>
+                            <dd class="col-sm-7">@($"{Model.Capacity} {(Model.Capacity == 1 ? "person" : "people")}")</dd>
                         </dl>
 
                         <div class="text-center mt-3">
