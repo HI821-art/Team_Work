@@ -1,4 +1,4 @@
-@model HotelDb.Models.Room
+@model HotelDb.Models.RoomViewModel
 
 @{
     ViewData["Title"] = "Edit Room";
@@ -15,7 +15,7 @@
                     <input type="hidden" asp-for="RoomId" />
                     @await Html.PartialAsync("_RoomForm", Model)
                     <div class="form-group text-center">
-                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
             </div>
@@ -27,5 +27,23 @@
 </section>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        document.querySelectorAll('.image-url-input').forEach(input => {
+            input.addEventListener('input', function () {
+                const previewId = this.dataset.previewId;
+                const previewImg = document.getElementById(previewId);
+                if (this.value.trim()) {
+                    previewImg.src = this.value;
+                    previewImg.style.display = 'block';
+                } else {
+                    previewImg.src = '';
+                    previewImg.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

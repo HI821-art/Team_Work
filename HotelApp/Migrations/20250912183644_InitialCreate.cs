@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelApp.Migrations
 {
     /// <inheritdoc />
-    public partial class Details : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -65,7 +65,8 @@ namespace HotelApp.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Amenities = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,15 +252,15 @@ namespace HotelApp.Migrations
 
             migrationBuilder.InsertData(
                 table: "Rooms",
-                columns: new[] { "RoomId", "Capacity", "Description", "Number", "Price", "Status", "Type" },
+                columns: new[] { "RoomId", "Amenities", "Capacity", "Description", "Number", "Price", "Status", "Type" },
                 values: new object[,]
                 {
-                    { 1, 2, "Cozy single room with a balcony and city view.", "101", 4000.0, "Free", "Deluxe" },
-                    { 2, 4, "Spacious double room with modern design and large beds.", "202", 7500.0, "Free", "Executive" },
-                    { 3, 2, "Luxury presidential suite with premium facilities and panoramic city view.", "303", 10500.0, "Booked", "Presidential" },
-                    { 4, 2, "Comfortable single room with a minimalist interior, perfect for short stays.", "104", 4000.0, "Booked", "Deluxe" },
-                    { 5, 4, "Modern double room with bright colors and a relaxing atmosphere.", "205", 7500.0, "Free", "Executive" },
-                    { 6, 2, "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.", "306", 10500.0, "Free", "Presidential" }
+                    { 1, "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower", 2, "Cozy single room with a balcony and city view.", "101", 4000.0, "Free", "Deluxe" },
+                    { 2, "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor", 4, "Spacious double room with modern design and large beds.", "202", 7500.0, "Free", "Executive" },
+                    { 3, "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano", 2, "Luxury presidential suite with premium facilities and panoramic city view.", "303", 10500.0, "Booked", "Presidential" },
+                    { 4, "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower", 2, "Comfortable single room with a minimalist interior, perfect for short stays.", "104", 4000.0, "Booked", "Deluxe" },
+                    { 5, "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor", 4, "Modern double room with bright colors and a relaxing atmosphere.", "205", 7500.0, "Free", "Executive" },
+                    { 6, "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano", 2, "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.", "306", 10500.0, "Free", "Presidential" }
                 });
 
             migrationBuilder.InsertData(
