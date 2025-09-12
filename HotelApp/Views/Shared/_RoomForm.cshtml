@@ -1,25 +1,33 @@
-@model HotelDb.Models.Room
+@model HotelDb.Models.RoomViewModel
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 <div class="form-group mb-3">
     <label asp-for="Number" class="control-label">Room Number</label>
     <input asp-for="Number" class="form-control bg-dark text-white border-dark" />
     <span asp-validation-for="Number" class="text-danger"></span>
 </div>
+
 <div class="form-group mb-3">
-    <label asp-for="Type" class="control-label">Type</label>
+    <label asp-for="Type" class="control-label">Room Type</label>
     <select asp-for="Type" class="form-control bg-dark text-white border-dark">
         <option value="">Select type</option>
-        <option value="Single">Single</option>
-        <option value="Double">Double</option>
-        <option value="Presidental">Presidental</option>
+        <option value="Deluxe">Deluxe</option>
+        <option value="Executive">Executive</option>
+        <option value="Presidential">Presidential</option>
     </select>
     <span asp-validation-for="Type" class="text-danger"></span>
 </div>
+
 <div class="form-group mb-3">
     <label asp-for="Price" class="control-label">Price (UAH/night)</label>
     <input asp-for="Price" class="form-control bg-dark text-white border-dark" type="number" step="0.01" />
     <span asp-validation-for="Price" class="text-danger"></span>
+</div>
+<div class="form-group mb-3">
+    <label asp-for="Capacity" class="control-label">Capacity</label>
+    <input asp-for="Capacity" class="form-control bg-dark text-white border-dark" type="number" min="1" />
+    <span asp-validation-for="Capacity" class="text-danger"></span>
 </div>
 <div class="form-group mb-3">
     <label asp-for="Status" class="control-label">Status</label>
@@ -30,3 +38,282 @@
     </select>
     <span asp-validation-for="Status" class="text-danger"></span>
 </div>
+
+<div class="form-group mb-3">
+    <label asp-for="Description" class="control-label">Description</label>
+    <textarea asp-for="Description" class="form-control bg-dark text-white border-dark" rows="3"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+
+@{
+    var allAmenities = new[] {
+        "Free Wi-Fi", "Air Conditioning", "Smart TV", "Workspace",
+        "Wardrobe", "Mini-bar", "King-size bed", "Shower"
+    };
+
+    var selectedAmenities = Model.Amenities?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(a => a.Trim()).ToHashSet() ?? new HashSet<string>();
+}
+
+<div class="form-group mb-3">
+    <label class="control-label">Amenities</label>
+    <div class="row">
+        @foreach (var amenity in allAmenities)
+        {
+            <div class="col-md-6 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="@amenity"
+                           checked="@selectedAmenities.Contains(amenity)"
+                           onchange="updateAmenitiesField()" />
+                    <label class="form-check-label">@amenity</label>
+                </div>
+            </div>
+        }
+    </div>
+    <input type="hidden" asp-for="Amenities" id="AmenitiesField" />
+</div>
+
+<div class="mb-3">
+    <button type="button" class="btn btn-outline-danger btn-sm" id="deleteSelectedBtn" style="display: none;" title="Delete selected images">
+        <i class="bi bi-trash-fill"></i>
+    </button>
+</div>
+
+<div id="image-gallery" class="mini-gallery mb-3">
+    @for (int i = 0; i < Model.ImageUrls.Count; i++)
+    {
+        var imageUrl = Model.ImageUrls[i];
+        <div class="gallery-item" data-index="@i">
+            <img src="@imageUrl" alt="Room image" class="gallery-image" />
+            <input type="hidden" name="ImageUrls[@i]" value="@imageUrl" />
+        </div>
+    }
+</div>
+
+<div class="form-group mb-4">
+    <label class="control-label mb-2">Upload Images</label>
+
+    <div id="drop-zone" class="drop-zone bg-dark text-white border border-secondary rounded p-4 text-center">
+        <p>Select files or drag them here</p>
+        <input type="file" id="fileInput" name="RoomImages" multiple hidden />
+        <button type="button" class="btn btn-outline-light btn-sm" id="selectFileBtn" title="Select files">
+            <i class="bi bi-upload"></i>
+        </button>
+    </div>
+
+    <div id="preview" class="mt-3 d-flex flex-wrap gap-3"></div>
+</div>
+
+<div class="text-end">
+    <button type="button" class="btn btn-outline-warning btn-sm" id="clearAllBtn" title="Clear all previews">
+        <i class="bi bi-trash3-fill"></i>
+    </button>
+</div>
+
+<input type="hidden" asp-for="RoomId" />
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const gallery = document.getElementById('image-gallery');
+        const deleteBtn = document.getElementById('deleteSelectedBtn');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const preview = document.getElementById('preview');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+
+        const MAX_FILES = 10;
+        const MAX_SIZE_MB = 5;
+        let selectedFiles = [];
+
+        function updateAmenitiesField() {
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value.trim());
+            const hiddenField = document.getElementById('AmenitiesField');
+            if (hiddenField) {
+                hiddenField.value = selected.join(', ');
+            }
+        }
+
+        updateAmenitiesField();
+
+        document.querySelector('form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const form = e.target;
+
+            updateAmenitiesField();
+
+        
+            const existingInputs = gallery.querySelectorAll('input[type="hidden"]');
+
+        
+            const newImageUrls = await uploadImagesBeforeSubmit();
+
+       
+            newImageUrls.forEach((url, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `ImageUrls[${existingInputs.length + index}]`;
+                input.value = url;
+                form.appendChild(input);
+            });
+
+            form.submit();
+        });
+
+        gallery.addEventListener('click', function (e) {
+            if (e.target.classList.contains('gallery-image')) {
+                const galleryItem = e.target.closest('.gallery-item');
+                galleryItem.classList.toggle('selected');
+                const selectedItems = gallery.querySelectorAll('.gallery-item.selected');
+                deleteBtn.style.display = selectedItems.length > 0 ? 'inline-block' : 'none';
+            }
+        });
+
+        deleteBtn.addEventListener('click', async function () {
+            if (confirm("Are you sure you want to delete the selected images?")) {
+                const selectedItems = gallery.querySelectorAll('.gallery-item.selected');
+
+                for (const item of selectedItems) {
+                    const input = item.querySelector('input[type="hidden"]');
+                    const imageUrl = input?.value;
+
+                    if (imageUrl) {
+                       await fetch('/RoomsImg/DeleteRoomImage', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ imageUrl })
+                        });
+                    }
+
+                    item.remove();
+                }
+
+                deleteBtn.style.display = 'none';
+                updateImageIndices();
+            }
+        });
+
+        selectFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+
+        dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles({ target: { files } });
+        });
+
+        function handleFiles(e) {
+            const newFiles = Array.from(e.target.files);
+            const existingCount = document.querySelectorAll('.gallery-item').length;
+
+            if (selectedFiles.length + newFiles.length > MAX_FILES) {
+                alert(`Maximum ${MAX_FILES} images allowed. You already selected ${selectedFiles.length}.`);
+                return;
+            }
+
+            if (existingCount + newFiles.length > MAX_FILES) {
+                alert(`Maximum ${MAX_FILES} images allowed. You already have ${existingCount}.`);
+                return;
+            }
+
+            newFiles.forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    alert(`"${file.name}" is not a valid image.`);
+                    return;
+                }
+
+                if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                    alert(`"${file.name}" exceeds the ${MAX_SIZE_MB}MB limit.`);
+                    return;
+                }
+
+                selectedFiles.push(file);
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('preview-wrapper');
+
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.classList.add('gallery-image');
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('remove-image-btn');
+                    removeBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
+
+                    removeBtn.addEventListener('click', () => {
+                        preview.removeChild(wrapper);
+                        selectedFiles = selectedFiles.filter(f => f !== file);
+                    });
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(removeBtn);
+                    preview.appendChild(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            fileInput.value = '';
+        }
+
+        fileInput.addEventListener('change', function () {
+            const count = this.files.length;
+            dropZone.querySelector('p').textContent = count > 0
+                ? `Selected ${count} file(s)`
+                : 'Select files or drag them here';
+        });
+
+        clearAllBtn.addEventListener('click', () => {
+            selectedFiles = [];
+            preview.innerHTML = '';
+            fileInput.value = '';
+        });
+
+        async function uploadImagesBeforeSubmit() {
+            if (selectedFiles.length === 0) return [];
+
+            const formData = new FormData();
+            selectedFiles.forEach(file => formData.append('RoomImages', file));
+
+            try {
+                const response = await fetch('/RoomsImg/UploadRoomImages', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                const result = await response.json();
+                return result.images || [];
+            } catch (error) {
+                alert('Image upload failed. Please try again.');
+                return [];
+            }
+        }
+
+        function updateImageIndices() {
+            const items = gallery.querySelectorAll('.gallery-item');
+            items.forEach((item, index) => {
+                item.dataset.index = index;
+                const hiddenInput = item.querySelector('input[type="hidden"]');
+                hiddenInput.name = `ImageUrls[${index}]`;
+            });
+        }
+    });
+</script>

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace HotelDb.Models
 {
     public class Room
@@ -11,7 +11,7 @@ namespace HotelDb.Models
         public string Status { get; set; }
         public int Capacity { get; set; }
 
-        public string? Description { get; set; }// remove dublicate
+        public string? Description { get; set; }
 
         public string? Amenities { get; set; }
 
@@ -22,12 +22,17 @@ namespace HotelDb.Models
         public ICollection<Reservation> Reservations { get; set; }
     }
 
-    public class RoomImage
+
+
+public class RoomImage
     {
         public int RoomImageId { get; set; }
+
+        [Required]
         public string ImageUrl { get; set; }
 
         public int RoomId { get; set; }
-        public Room Room { get; set; }    }
+        public Room Room { get; set; }
+    }
 }
 
