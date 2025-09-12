@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelApp.Migrations
 {
     /// <inheritdoc />
-    public partial class AddBirthdateToUser : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace HotelApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -63,7 +63,8 @@ namespace HotelApp.Migrations
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -206,6 +207,26 @@ namespace HotelApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoomImages",
+                columns: table => new
+                {
+                    RoomImageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoomImages", x => x.RoomImageId);
+                    table.ForeignKey(
+                        name: "FK_RoomImages_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "RoomId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -229,15 +250,42 @@ namespace HotelApp.Migrations
 
             migrationBuilder.InsertData(
                 table: "Rooms",
-                columns: new[] { "RoomId", "Number", "Price", "Status", "Type" },
+                columns: new[] { "RoomId", "Description", "Number", "Price", "Status", "Type" },
                 values: new object[,]
                 {
-                    { 1, "101", 1500.0, "Free", "Single" },
-                    { 2, "202", 2500.0, "Free", "Double" },
-                    { 3, "303", 5000.0, "Booked", "Presidental" },
-                    { 4, "104", 1800.0, "Booked", "Single" },
-                    { 5, "205", 2800.0, "Free", "Double" },
-                    { 6, "306", 5500.0, "Free", "Presidental" }
+                    { 1, "Cozy single room with a balcony and city view.", "101", 1500.0, "Free", "Single" },
+                    { 2, "Spacious double room with modern design and large beds.", "202", 2500.0, "Free", "Double" },
+                    { 3, "Luxury presidential suite with premium facilities and panoramic city view.", "303", 5000.0, "Booked", "Presidental" },
+                    { 4, "Comfortable single room with a minimalist interior, perfect for short stays.", "104", 1800.0, "Booked", "Single" },
+                    { 5, "Modern double room with bright colors and a relaxing atmosphere.", "205", 2800.0, "Free", "Double" },
+                    { 6, "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.", "306", 5500.0, "Free", "Presidental" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RoomImages",
+                columns: new[] { "RoomImageId", "ImageUrl", "RoomId" },
+                values: new object[,]
+                {
+                    { 1, "/images/rooms/101_1.jpg", 1 },
+                    { 2, "/images/rooms/101_2.jpg", 1 },
+                    { 3, "/images/rooms/202_1.jpg", 2 },
+                    { 4, "/images/rooms/202_2.jpg", 2 },
+                    { 5, "/images/rooms/303_1.jpg", 3 },
+                    { 6, "/images/rooms/303_2.jpg", 3 },
+                    { 8, "/images/rooms/104_1.jpg", 4 },
+                    { 9, "/images/rooms/104_2.jpg", 4 },
+                    { 10, "/images/rooms/205_1.jpg", 5 },
+                    { 11, "/images/rooms/205_2.jpg", 5 },
+                    { 12, "/images/rooms/306_1.jpg", 6 },
+                    { 13, "/images/rooms/306_2.jpg", 6 },
+                    { 14, "/images/rooms/306_3.jpg", 6 },
+                    { 15, "/images/rooms/306_4.jpg", 6 },
+                    { 16, "/images/rooms/306_5.jpg", 6 },
+                    { 17, "/images/rooms/303_6.jpg", 3 },
+                    { 18, "/images/rooms/303_4.jpg", 3 },
+                    { 19, "/images/rooms/303_5.jpg", 3 },
+                    { 20, "/images/rooms/202_3.jpg", 2 },
+                    { 21, "/images/rooms/205_3.jpg", 5 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -294,6 +342,11 @@ namespace HotelApp.Migrations
                 name: "IX_Reservations_UserId",
                 table: "Reservations",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoomImages_RoomId",
+                table: "RoomImages",
+                column: "RoomId");
         }
 
         /// <inheritdoc />
@@ -316,6 +369,9 @@ namespace HotelApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "RoomImages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

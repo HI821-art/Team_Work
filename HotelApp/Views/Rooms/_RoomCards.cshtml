@@ -1,0 +1,31 @@
+﻿@model IEnumerable<HotelDb.Models.Room>
+
+@if (Model != null && Model.Any())
+{
+    @foreach (var room in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card room-card shadow-lg rounded-4 bg-dark border-0 text-white">
+                @{
+                    var mainImage = room.Images?.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg";
+                }
+                <img src="@mainImage" class="card-img-top rounded-top-4" style="height:200px; object-fit:cover;" alt="Room @room.Number" />
+
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
+                    <p class="card-text">Price: @room.Price UAH/night</p>
+                    <p class="card-text">Status: @(room.Status == "Free" ? "Available" : "Booked")</p>
+                    <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-light">Details</a>
+                    <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-12">
+        <div class="alert alert-light text-center">No rooms available matching your filters.</div>
+    </div>
+}

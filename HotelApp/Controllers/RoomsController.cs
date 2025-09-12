@@ -2,6 +2,7 @@ using HotelDb.Data;
 using HotelDb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelApp.Controllers
@@ -15,11 +16,31 @@ namespace HotelApp.Controllers
             _context = context;
         }
 
-        // GET: Rooms
+        // GET: Rooms - початкова сторінка
         public async Task<IActionResult> Index()
         {
             var rooms = await _context.Rooms.Include(r => r.Images).ToListAsync();
             return View(rooms);
+        }
+
+        // GET: Rooms/Filter - повертає відфільтровані кімнати як PartialView
+        [HttpGet]
+        public async Task<IActionResult> Filter(double? minPrice, double? maxPrice, int? capacity, string type)
+        {
+            var roomsQuery = _context.Rooms.Include(r => r.Images).AsQueryable();
+
+            if (minPrice.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Price >= minPrice.Value);
+            if (maxPrice.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Price <= maxPrice.Value);
+            if (capacity.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Capacity >= capacity.Value);
+            if (!string.IsNullOrEmpty(type))
+                roomsQuery = roomsQuery.Where(r => r.Type == type);
+
+            var rooms = await roomsQuery.ToListAsync();
+
+            return PartialView("_RoomCards", rooms);
         }
 
         // GET: Rooms/Details/5
@@ -37,10 +58,7 @@ namespace HotelApp.Controllers
         }
 
         // GET: Rooms/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Rooms/Create
         [HttpPost]
@@ -83,10 +101,8 @@ namespace HotelApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RoomExists(room.RoomId))
-                        return NotFound();
-                    else
-                        throw;
+                    if (!RoomExists(room.RoomId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }

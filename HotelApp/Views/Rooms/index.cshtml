@@ -3,37 +3,103 @@
 @{
     ViewData["Title"] = "Rooms";
     Layout = "_Layout";
+    var selectedType = Context.Request.Query["type"].ToString();
 }
 
 <section class="rooms-section py-4">
     <div class="container">
         <h2 class="text-center mb-4 fw-bold text-white">Our Rooms</h2>
-        <div class="text-end mb-3">
-            <a asp-action="Create" class="btn btn-primary">Create New Room</a>
-        </div>
-        <div class="row">
-            @foreach (var room in Model)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card room-card shadow-lg rounded-4 bg-dark border-0 text-white">
 
-                        @* ќсновне фото к≥мнати *@
-                        @{
-                            var mainImage = room.Images?.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg";
-                        }
-                        <img src="@mainImage" class="card-img-top rounded-top-4" style="height:200px; object-fit:cover;" alt="Room @room.Number" />
+        <!--  нопки Filter та Create New Room -->
+        <div class="d-flex justify-content-between mb-3 align-items-start">
+            <!-- Filter панель -->
+            <div class="container mb-3 p-0">
+                <button class="btn btn-outline-primary mb-3" id="filterBtn">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
 
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
-                            <p class="card-text">Price: @room.Price UAH/night</p>
-                            <p class="card-text">Status: @(room.Status == "Free" ? "Available" : "Booked")</p>
-                            <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-light">Details</a>
-                            <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
+                <div class="filter-panel bg-light p-4 rounded-3 shadow-sm">
+                    <form class="row g-3">
+                        <!-- Min Price -->
+                        <div class="col-md-3">
+                            <label class="form-label">Min Price</label>
+                            <input type="number" name="minPrice" class="form-control" value="@Context.Request.Query["minPrice"]" />
                         </div>
-                    </div>
+
+                        <!-- Max Price -->
+                        <div class="col-md-3">
+                            <label class="form-label">Max Price</label>
+                            <input type="number" name="maxPrice" class="form-control" value="@Context.Request.Query["maxPrice"]" />
+                        </div>
+
+                        <!-- Guests -->
+                        <div class="col-md-3">
+                            <label class="form-label">Guests</label>
+                            <input type="number" name="capacity" class="form-control" value="@Context.Request.Query["capacity"]" />
+                        </div>
+
+                        <!-- Room Type -->
+                        <div class="col-md-3">
+                            <label class="form-label">Room Type</label>
+                            <select name="type" class="form-select">
+                                <option value="" selected="@(string.IsNullOrEmpty(selectedType))">Any</option>
+                                <option value="Single" selected="@(selectedType == "Single")">Single</option>
+                                <option value="Double" selected="@(selectedType == "Double")">Double</option>
+                                <option value="Presidental" selected="@(selectedType == "Presidental")">Presidental</option>
+                            </select>
+                        </div>
+
+                        <!--  нопки Apply / Reset -->
+                        <div class="col-12 d-flex gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary w-100">Apply</button>
+                            <a href="#" class="btn btn-secondary w-100" id="resetBtn">Reset</a>
+                        </div>
+                    </form>
                 </div>
-            }
+            </div>
+
+            <!-- Create New Room -->
+            <a asp-action="Create" class="btn btn-primary" style="width:180px;">Create New Room</a>
+        </div>
+
+        <!-- —писок к≥мнат -->
+        <div class="row" id="roomsContainer">
+            @await Html.PartialAsync("_RoomCards", Model)
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        const filterBtn = document.getElementById('filterBtn');
+        const filterPanel = document.querySelector('.filter-panel');
+        const applyBtn = document.querySelector('form button[type="submit"]');
+        const resetBtn = document.getElementById('resetBtn');
+        const roomsContainer = document.getElementById('roomsContainer');
+
+        // Toggle панель
+        filterBtn.addEventListener('click', () => {
+            filterPanel.classList.toggle('show');
+        });
+
+        // Apply filter
+        applyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const form = e.target.closest('form');
+            const formData = new FormData(form);
+            const query = new URLSearchParams(formData).toString();
+            const response = await fetch(`/Rooms/Filter?${query}`);
+            const html = await response.text();
+            roomsContainer.innerHTML = html;
+        });
+
+        // Reset filter
+        resetBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const response = await fetch(`/Rooms/Filter`);
+            const html = await response.text();
+            roomsContainer.innerHTML = html;
+            document.querySelectorAll('form input, form select').forEach(i => i.value = '');
+        });
+    </script>
+}

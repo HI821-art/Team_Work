@@ -9,12 +9,12 @@ namespace HotelApp.Persistance
         {
             // Rooms
             modelBuilder.Entity<Room>().HasData(
-                new Room { RoomId = 1, Number = "101", Type = "Single", Price = 1500.00, Status = "Free", Description = "Cozy single room with a balcony and city view." },
-                new Room { RoomId = 2, Number = "202", Type = "Double", Price = 2500.00, Status = "Free", Description = "Spacious double room with modern design and large beds." },
-                new Room { RoomId = 3, Number = "303", Type = "Presidental", Price = 5000.00, Status = "Booked", Description = "Luxury presidential suite with premium facilities and panoramic city view." },
-                new Room { RoomId = 4, Number = "104", Type = "Single", Price = 1800.00, Status = "Booked", Description = "Comfortable single room with a minimalist interior, perfect for short stays." },
-                new Room { RoomId = 5, Number = "205", Type = "Double", Price = 2800.00, Status = "Free", Description = "Modern double room with bright colors and a relaxing atmosphere." },
-                new Room { RoomId = 6, Number = "306", Type = "Presidental", Price = 5500.00, Status = "Free", Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi." }
+                new Room { RoomId = 1, Number = "101", Type = "Single", Price = 1500.00, Status = "Free", Capacity = 1, Description = "Cozy single room with a balcony and city view." },
+                new Room { RoomId = 2, Number = "202", Type = "Double", Price = 2500.00, Status = "Free", Capacity = 2, Description = "Spacious double room with modern design and large beds." },
+                new Room { RoomId = 3, Number = "303", Type = "Presidental", Price = 5000.00, Status = "Booked", Capacity = 4, Description = "Luxury presidential suite with premium facilities and panoramic city view." },
+                new Room { RoomId = 4, Number = "104", Type = "Single", Price = 1800.00, Status = "Booked", Capacity = 1, Description = "Comfortable single room with a minimalist interior, perfect for short stays." },
+                new Room { RoomId = 5, Number = "205", Type = "Double", Price = 2800.00, Status = "Free", Capacity = 2, Description = "Modern double room with bright colors and a relaxing atmosphere." },
+                new Room { RoomId = 6, Number = "306", Type = "Presidental", Price = 5500.00, Status = "Free", Capacity = 4, Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi." }
             );
 
             // Room Images
