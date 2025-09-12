@@ -33,6 +33,9 @@
 
                             <dt class="col-sm-5">Status</dt>
                             <dd class="col-sm-7">@(Model.Status == "Free" ? "Available" : "Booked")</dd>
+
+                            <dt class="col-sm-5">Capacity</dt>
+                            <dd class="col-sm-7">@($"{Model.Capacity} {(Model.Capacity == 1 ? "person" : "people")}")</dd>
                         </dl>
 
                         <div class="text-center mt-3">
