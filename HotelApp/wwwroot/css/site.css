@@ -115,3 +115,23 @@ footer {
     font-family: 'Playfair Display', serif;
     font-weight: 600;
 }
+
+
+/* Панель фільтру */
+.filter-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 1s ease-in-out;
+}
+
+    .filter-panel.show {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
+        margin-bottom: 1rem;
+    }
+
+
+

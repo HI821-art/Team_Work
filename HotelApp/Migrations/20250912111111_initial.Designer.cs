@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelApp.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20250910100910_FixRoomDescriptionNullable")]
-    partial class FixRoomDescriptionNullable
+    [Migration("20250912111111_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -122,6 +122,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 1,
+                            Description = "Cozy single room with a balcony and city view.",
                             Number = "101",
                             Price = 1500.0,
                             Status = "Free",
@@ -130,6 +131,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 2,
+                            Description = "Spacious double room with modern design and large beds.",
                             Number = "202",
                             Price = 2500.0,
                             Status = "Free",
@@ -138,6 +140,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 3,
+                            Description = "Luxury presidential suite with premium facilities and panoramic city view.",
                             Number = "303",
                             Price = 5000.0,
                             Status = "Booked",
@@ -146,6 +149,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 4,
+                            Description = "Comfortable single room with a minimalist interior, perfect for short stays.",
                             Number = "104",
                             Price = 1800.0,
                             Status = "Booked",
@@ -154,6 +158,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 5,
+                            Description = "Modern double room with bright colors and a relaxing atmosphere.",
                             Number = "205",
                             Price = 2800.0,
                             Status = "Free",
@@ -162,6 +167,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 6,
+                            Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.",
                             Number = "306",
                             Price = 5500.0,
                             Status = "Free",
@@ -189,6 +195,128 @@ namespace HotelApp.Migrations
                     b.HasIndex("RoomId");
 
                     b.ToTable("RoomImages");
+
+                    b.HasData(
+                        new
+                        {
+                            RoomImageId = 1,
+                            ImageUrl = "/images/rooms/101_1.jpg",
+                            RoomId = 1
+                        },
+                        new
+                        {
+                            RoomImageId = 2,
+                            ImageUrl = "/images/rooms/101_2.jpg",
+                            RoomId = 1
+                        },
+                        new
+                        {
+                            RoomImageId = 3,
+                            ImageUrl = "/images/rooms/202_1.jpg",
+                            RoomId = 2
+                        },
+                        new
+                        {
+                            RoomImageId = 4,
+                            ImageUrl = "/images/rooms/202_2.jpg",
+                            RoomId = 2
+                        },
+                        new
+                        {
+                            RoomImageId = 20,
+                            ImageUrl = "/images/rooms/202_3.jpg",
+                            RoomId = 2
+                        },
+                        new
+                        {
+                            RoomImageId = 5,
+                            ImageUrl = "/images/rooms/303_1.jpg",
+                            RoomId = 3
+                        },
+                        new
+                        {
+                            RoomImageId = 6,
+                            ImageUrl = "/images/rooms/303_2.jpg",
+                            RoomId = 3
+                        },
+                        new
+                        {
+                            RoomImageId = 17,
+                            ImageUrl = "/images/rooms/303_6.jpg",
+                            RoomId = 3
+                        },
+                        new
+                        {
+                            RoomImageId = 18,
+                            ImageUrl = "/images/rooms/303_4.jpg",
+                            RoomId = 3
+                        },
+                        new
+                        {
+                            RoomImageId = 19,
+                            ImageUrl = "/images/rooms/303_5.jpg",
+                            RoomId = 3
+                        },
+                        new
+                        {
+                            RoomImageId = 8,
+                            ImageUrl = "/images/rooms/104_1.jpg",
+                            RoomId = 4
+                        },
+                        new
+                        {
+                            RoomImageId = 9,
+                            ImageUrl = "/images/rooms/104_2.jpg",
+                            RoomId = 4
+                        },
+                        new
+                        {
+                            RoomImageId = 10,
+                            ImageUrl = "/images/rooms/205_1.jpg",
+                            RoomId = 5
+                        },
+                        new
+                        {
+                            RoomImageId = 11,
+                            ImageUrl = "/images/rooms/205_2.jpg",
+                            RoomId = 5
+                        },
+                        new
+                        {
+                            RoomImageId = 21,
+                            ImageUrl = "/images/rooms/205_3.jpg",
+                            RoomId = 5
+                        },
+                        new
+                        {
+                            RoomImageId = 12,
+                            ImageUrl = "/images/rooms/306_1.jpg",
+                            RoomId = 6
+                        },
+                        new
+                        {
+                            RoomImageId = 13,
+                            ImageUrl = "/images/rooms/306_2.jpg",
+                            RoomId = 6
+                        },
+                        new
+                        {
+                            RoomImageId = 14,
+                            ImageUrl = "/images/rooms/306_3.jpg",
+                            RoomId = 6
+                        },
+                        new
+                        {
+                            RoomImageId = 15,
+                            ImageUrl = "/images/rooms/306_4.jpg",
+                            RoomId = 6
+                        },
+                        new
+                        {
+                            RoomImageId = 16,
+                            ImageUrl = "/images/rooms/306_5.jpg",
+                            RoomId = 6
+                        });
                 });
 
             modelBuilder.Entity("HotelDb.Models.User", b =>
@@ -198,6 +326,9 @@ namespace HotelApp.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Birthdate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -211,7 +342,6 @@ namespace HotelApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -340,10 +470,12 @@ namespace HotelApp.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -380,10 +512,12 @@ namespace HotelApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");

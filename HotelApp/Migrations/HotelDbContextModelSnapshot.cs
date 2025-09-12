@@ -93,6 +93,9 @@ namespace HotelApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
 
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -119,6 +122,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 1,
+                            Capacity = 1,
                             Description = "Cozy single room with a balcony and city view.",
                             Number = "101",
                             Price = 1500.0,
@@ -128,6 +132,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 2,
+                            Capacity = 2,
                             Description = "Spacious double room with modern design and large beds.",
                             Number = "202",
                             Price = 2500.0,
@@ -137,6 +142,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 3,
+                            Capacity = 4,
                             Description = "Luxury presidential suite with premium facilities and panoramic city view.",
                             Number = "303",
                             Price = 5000.0,
@@ -146,6 +152,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 4,
+                            Capacity = 1,
                             Description = "Comfortable single room with a minimalist interior, perfect for short stays.",
                             Number = "104",
                             Price = 1800.0,
@@ -155,6 +162,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 5,
+                            Capacity = 2,
                             Description = "Modern double room with bright colors and a relaxing atmosphere.",
                             Number = "205",
                             Price = 2800.0,
@@ -164,6 +172,7 @@ namespace HotelApp.Migrations
                         new
                         {
                             RoomId = 6,
+                            Capacity = 4,
                             Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.",
                             Number = "306",
                             Price = 5500.0,
