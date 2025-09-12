@@ -27,6 +27,26 @@ namespace HotelApp.Controllers
             return View(rooms);
         }
 
+        // GET: Rooms/Filter
+        [HttpGet]
+        public async Task<IActionResult> Filter(double? minPrice, double? maxPrice, int? capacity, string type)
+        {
+            var roomsQuery = _context.Rooms.Include(r => r.Images).AsQueryable();
+
+            if (minPrice.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Price >= minPrice.Value);
+            if (maxPrice.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Price <= maxPrice.Value);
+            if (capacity.HasValue)
+                roomsQuery = roomsQuery.Where(r => r.Capacity >= capacity.Value);
+            if (!string.IsNullOrEmpty(type))
+                roomsQuery = roomsQuery.Where(r => r.Type == type);
+
+            var rooms = await roomsQuery.ToListAsync();
+
+            return PartialView("_RoomCards", rooms);
+        }
+
         // GET: Rooms/Create
         [HttpGet]
         public IActionResult Create()
