@@ -9,13 +9,78 @@ namespace HotelApp.Persistance
         {
             // Rooms
             modelBuilder.Entity<Room>().HasData(
-                new Room { RoomId = 1, Number = "101", Type = "Deluxe", Price = 4000.00, Status = "Free", Capacity = 2, Description = "Cozy single room with a balcony and city view." },
-                new Room { RoomId = 2, Number = "202", Type = "Executive", Price = 7500.00, Status = "Free", Capacity = 4, Description = "Spacious double room with modern design and large beds." },
-                new Room { RoomId = 3, Number = "303", Type = "Presidential", Price = 10500.00, Status = "Booked", Capacity = 2, Description = "Luxury presidential suite with premium facilities and panoramic city view." },
-                new Room { RoomId = 4, Number = "104", Type = "Deluxe", Price = 4000.00, Status = "Booked", Capacity = 2, Description = "Comfortable single room with a minimalist interior, perfect for short stays." },
-                new Room { RoomId = 5, Number = "205", Type = "Executive", Price = 7500.00, Status = "Free", Capacity = 4, Description = "Modern double room with bright colors and a relaxing atmosphere." },
-                new Room { RoomId = 6, Number = "306", Type = "Presidential", Price = 10500.00, Status = "Free", Capacity = 2, Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi." }
-            );
+     new Room
+     {
+         RoomId = 1,
+         Number = "101",
+         Type = "Deluxe",
+         Price = 4000.00,
+         Status = "Free",
+         Capacity = 2,
+         Description = "Cozy single room with a balcony and city view.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower"
+     },
+
+     new Room
+     {
+         RoomId = 2,
+         Number = "202",
+         Type = "Executive",
+         Price = 7500.00,
+         Status = "Free",
+         Capacity = 4,
+         Description = "Spacious double room with modern design and large beds.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor"
+     },
+
+     new Room
+     {
+         RoomId = 3,
+         Number = "303",
+         Type = "Presidential",
+         Price = 10500.00,
+         Status = "Booked",
+         Capacity = 2,
+         Description = "Luxury presidential suite with premium facilities and panoramic city view.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano"
+     },
+
+     new Room
+     {
+         RoomId = 4,
+         Number = "104",
+         Type = "Deluxe",
+         Price = 4000.00,
+         Status = "Booked",
+         Capacity = 2,
+         Description = "Comfortable single room with a minimalist interior, perfect for short stays.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Smart TV, Workspace, Wardrobe, Mini-bar, King-size bed, Shower"
+     },
+
+     new Room
+     {
+         RoomId = 5,
+         Number = "205",
+         Type = "Executive",
+         Price = 7500.00,
+         Status = "Free",
+         Capacity = 4,
+         Description = "Modern double room with bright colors and a relaxing atmosphere.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Workspace, Wardrobe, Mini-bar, 2x King-size bed, Shower, 2x Sofa, Mini kitchen, Second floor"
+     },
+
+     new Room
+     {
+         RoomId = 6,
+         Number = "306",
+         Type = "Presidential",
+         Price = 10500.00,
+         Status = "Free",
+         Capacity = 2,
+         Description = "Exclusive presidential suite with luxury furniture, private bar and Jacuzzi.",
+         Amenities = "Free Wi-Fi, Air Conditioning, Coffee machine, Smart TV, Luxury workspace, Wardrobe, Private bar, King-size bed 2x, Luxury sofa, Luxury second floor,  Jacuzzi, Piano"
+     }
+ );
 
             // Room Images
             modelBuilder.Entity<RoomImage>().HasData(
