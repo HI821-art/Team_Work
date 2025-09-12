@@ -15,6 +15,7 @@
                     <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
                     <p class="card-text">Price: @room.Price UAH/night</p>
                     <p class="card-text">Status: @(room.Status == "Free" ? "Available" : "Booked")</p>
+                    <p class="card-text">Capacity: @room.Capacity @(room.Capacity == 1 ? "person" : "people")</p>
                     <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-light">Details</a>
                     <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
                     <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
