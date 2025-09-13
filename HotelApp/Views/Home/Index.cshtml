@@ -17,43 +17,26 @@
                     <div class="col-md-4">
                         <div class="card h-100 shadow-sm">
 
-                            <!-- Room Images Carousel -->
-                            <div id="carouselRoom@room.RoomId" class="carousel slide" data-bs-ride="carousel">
+                            <!-- Room Images Carousel (Auto Slide Only) -->
+                            <div id="carouselRoom@room.RoomId" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
                                 <div class="carousel-inner">
-                                    @if (room.Images != null && room.Images.Any())
-                                    {
-                                        var first = true;
-                                        foreach (var img in room.Images)
+                                    @{
+                                        var imagesList = room.Images?.ToList() ?? new List<HotelDb.Models.RoomImage>();
+                                        if (!imagesList.Any())
                                         {
-                                            <div class="carousel-item @(first ? "active" : "")">
-                                                <img src="@img.ImageUrl"
-                                                     class="d-block w-100"
-                                                     style="height: 220px; object-fit: cover;"
-                                                     alt="@room.Type" />
-                                            </div>
-                                            first = false;
+                                            imagesList.Add(new HotelDb.Models.RoomImage { ImageUrl = "~/images/room-sample.jpg" });
                                         }
                                     }
-                                    else
+                                    @for (int i = 0; i < imagesList.Count; i++)
                                     {
-                                        <div class="carousel-item active">
-                                            <img src="~/images/room-sample.jpg"
+                                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                                            <img src="@imagesList[i].ImageUrl"
                                                  class="d-block w-100"
                                                  style="height: 220px; object-fit: cover;"
                                                  alt="@room.Type" />
                                         </div>
                                     }
                                 </div>
-
-                                <!-- Controls -->
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselRoom@room.RoomId" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselRoom@room.RoomId" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
                             </div>
 
                             <div class="card-body">
@@ -75,6 +58,7 @@
             <a href="/Rooms" class="btn btn-outline-dark">View All Rooms</a>
         </div>
     </section>
+
 
 
     <!-- Our Services -->
