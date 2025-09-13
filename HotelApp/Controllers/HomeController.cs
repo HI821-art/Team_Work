@@ -1,21 +1,29 @@
+using HotelDb.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using HotelApp.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HotelDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, HotelDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var rooms = await _context.Rooms
+                .Include(r => r.Images)
+                .ToListAsync();
+
+            return View(rooms);
         }
 
         public IActionResult Privacy()
