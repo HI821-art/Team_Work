@@ -28,7 +28,7 @@ namespace HotelDb.Data
 
             if (!optionsBuilder.IsConfigured)
             {
-                var str = "Server=(localdb)\\mssqllocaldb;Database=HotelDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+                var str = "workstation id=HotelDb.mssql.somee.com;packet size=4096;user id=marexx00_SQLLogin_1;pwd=njvnxaefpn;data source=HotelDb.mssql.somee.com;persist security info=False;initial catalog=HotelDb;TrustServerCertificate=True";
                 optionsBuilder.UseSqlServer(str);
             }
         }
