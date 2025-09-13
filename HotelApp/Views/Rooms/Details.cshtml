@@ -61,6 +61,8 @@
                         <div class="text-center mt-3">
                             <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Edit</a>
                             <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
+                            <a asp-controller="Reservations" asp-action="Create" asp-route-roomId="@Model.RoomId" class="btn btn-warning mt-3">Забронювати</a>
+
                             <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
                         </div>
                     </div>

@@ -1,0 +1,61 @@
+﻿@using HotelDb.Models
+@model ReservationViewModel
+
+<div class="container mt-4">
+    <h3>Підтвердження резервації</h3>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="row g-0">
+            <div class="col-md-5">
+                <img src="@(Model.Room.Images.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg")"
+                     class="img-fluid rounded-start"
+                     alt="Room image" />
+            </div>
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Room.Type — Номер @Model.Room.Number</h5>
+                    <p><strong>Ціна:</strong> @Model.Room.Price₴ / ніч</p>
+                    <p><strong>Дати:</strong> @Model.CheckIn.ToShortDateString() — @Model.CheckOut.ToShortDateString()</p>
+                    <p><strong>Місткість:</strong> @Model.Room.Capacity осіб</p>
+                    <p><strong>Загальна сума:</strong> <span class="text-success fw-bold">@Model.TotalPrice₴</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Book" method="post" class="bg-light p-4 rounded shadow-sm">
+        <input type="hidden" asp-for="RoomId" />
+        <input type="hidden" asp-for="CheckIn" />
+        <input type="hidden" asp-for="CheckOut" />
+
+        <div class="form-group mb-3">
+            <label asp-for="FullName" class="form-label">Ім’я</label>
+            <input asp-for="FullName" class="form-control" required />
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" required />
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Phone" class="form-label">Телефон</label>
+            <input asp-for="Phone" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Підтвердити бронювання</button>
+    </form>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="toast show position-fixed bottom-0 end-0 m-3 bg-success text-white" role="alert">
+        <div class="toast-body">
+            @TempData["Success"]
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => document.querySelector('.toast').classList.remove('show'), 5000);
+    </script>
+}

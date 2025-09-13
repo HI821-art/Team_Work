@@ -1,0 +1,14 @@
+﻿@using HotelDb.Models
+@model List<Reservation>
+
+<h2>Доступні номери</h2>
+
+@foreach (var r in Model)
+{
+    <tr>
+        <td>@r.Room?.Number</td>
+        <td>@r.CheckIn.ToShortDateString()</td>
+        <td>@r.CheckOut.ToShortDateString()</td>
+        <td>@r.Status</td>
+    </tr>
+}
