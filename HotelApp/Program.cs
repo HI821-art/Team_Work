@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("HotelDb")
+var connectionString = builder.Configuration.GetConnectionString("HotelDbSomee")
     ?? throw new InvalidOperationException("Connection string 'HotelDb' not found.");
 
 builder.Services.AddDbContext<HotelDbContext>(options =>
