@@ -31,6 +31,15 @@ namespace HotelApp.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            var model = new AboutViewModel
+            {
+                Title = "About Us"
+            };
+            return View(model);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
