@@ -11,6 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("HotelDbSomee")
 builder.Services.AddDbContext<HotelDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+
 builder.Services.AddDefaultIdentity<User>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true; 
@@ -30,7 +31,13 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await RoleInitializer.SeedRolesAndAdminAsync(services);
+}
+
+if (!app.Environment.IsDevelopment()) 
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
