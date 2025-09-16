@@ -59,8 +59,11 @@
                         </dl>
 
                         <div class="text-center mt-3">
+                            @if (User.IsInRole("Admin"))
+                            {
                             <a asp-action="Edit" asp-route-id="@Model.RoomId" class="btn btn-warning">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
+								<a asp-action="Delete" asp-route-id="@Model.RoomId" class="btn btn-danger mx-2">Delete</a>
+                            }
                             <a asp-action="Index" class="btn btn-outline-light">Back to List</a>
                         </div>
                     </div>

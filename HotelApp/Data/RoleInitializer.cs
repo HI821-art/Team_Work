@@ -34,6 +34,8 @@ namespace HotelDb.Data
                 var result = await userManager.CreateAsync(user, "Admin123!");
                 if (result.Succeeded)
                 {
+                    user.EmailConfirmed = true;
+                    await userManager.UpdateAsync(user);
                     await userManager.AddToRoleAsync(user, "Admin");
                 }
             }
