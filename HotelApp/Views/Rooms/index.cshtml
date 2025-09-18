@@ -57,9 +57,12 @@
                     </form>
                 </div>
             </div>
-
+            
             <!-- Create New Room -->
-            <a asp-action="Create" class="btn btn-primary" style="width:180px;">Create New Room</a>
+            @if (User.IsInRole("Admin"))
+            {
+				<a asp-action="Create" class="btn btn-primary" style="width:180px;">Create New Room</a>
+			}
         </div>
 
         <!-- Список кімнат -->

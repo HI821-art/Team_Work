@@ -1,5 +1,6 @@
 using HotelDb.Data;
 using HotelDb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
@@ -49,6 +50,7 @@ namespace HotelApp.Controllers
 
         // GET: Rooms/Create
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View(new RoomViewModel());
@@ -56,6 +58,7 @@ namespace HotelApp.Controllers
 
         // POST: Rooms/Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoomViewModel model)
         {
@@ -82,6 +85,7 @@ namespace HotelApp.Controllers
         }
 
         // GET: Rooms/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -107,6 +111,7 @@ namespace HotelApp.Controllers
 
         // POST: Rooms/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RoomViewModel model)
         {
@@ -149,6 +154,7 @@ namespace HotelApp.Controllers
         }
 
         // GET: Rooms/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -160,6 +166,7 @@ namespace HotelApp.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
