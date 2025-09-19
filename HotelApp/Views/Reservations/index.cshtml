@@ -1,196 +1,238 @@
 ﻿@model IEnumerable<HotelDb.Models.Room>
+
 @{
-    ViewData["Title"] = "Room Selection - Secure Hotel Booking";
+    ViewData["Title"] = "Room Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid bg-primary text-white py-4 mb-4">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="display-5 mb-2">Select Your Perfect Room</h1>
-                <p class="mb-0">Secure booking system with instant confirmation</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <span class="badge bg-success fs-6">
-                    <i class="fas fa-shield-alt me-2"></i>SSL Secured Booking
-                </span>
+<div class="reservation-page">
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold">Book Your Perfect Room</h1>
+                    <p class="lead">Select your dates and find the best rooms for your stay</p>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Room Selection</li>
-        </ol>
-    </nav>
+    </section>
 
     <!-- Search Form -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-            <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Available Rooms</h5>
-        </div>
-        <div class="card-body">
-            <form id="searchForm" class="row g-3">
-                <div class="col-md-3">
-                    <label for="checkIn" class="form-label">Check-in Date</label>
-                    <input type="date" class="form-control" id="checkIn" name="checkIn" 
-                           value="@ViewBag.CheckIn?.ToString("yyyy-MM-dd")" required>
-                </div>
-                <div class="col-md-3">
-                    <label for="checkOut" class="form-label">Check-out Date</label>
-                    <input type="date" class="form-control" id="checkOut" name="checkOut" 
-                           value="@ViewBag.CheckOut?.ToString("yyyy-MM-dd")" required>
-                </div>
-                <div class="col-md-2">
-                    <label for="guests" class="form-label">Guests</label>
-                    <select class="form-select" id="guests" name="guests">
-                        <option value="1" @(ViewBag.Guests == 1 ? "selected" : "")>1 Guest</option>
-                        <option value="2" @(ViewBag.Guests == 2 ? "selected" : "")>2 Guests</option>
-                        <option value="3" @(ViewBag.Guests == 3 ? "selected" : "")>3 Guests</option>
-                        <option value="4" @(ViewBag.Guests == 4 ? "selected" : "")>4 Guests</option>
-                        <option value="5" @(ViewBag.Guests == 5 ? "selected" : "")>5+ Guests</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="rooms" class="form-label">Rooms</label>
-                    <select class="form-select" id="rooms" name="rooms">
-                        <option value="1">1 Room</option>
-                        <option value="2">2 Rooms</option>
-                        <option value="3">3 Rooms</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search me-2"></i>Search
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="text-center my-5" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2">Searching for available rooms...</p>
-    </div>
-
-    <!-- Room Cards Container -->
-    <div id="roomsContainer">
-        @if (Model.Any())
-        {
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <h4>Available Rooms (@ViewBag.TotalNights night@(ViewBag.TotalNights > 1 ? "s" : ""))</h4>
-                    <small class="text-muted">
-                        @ViewBag.CheckIn?.ToString("MMM dd, yyyy") - @ViewBag.CheckOut?.ToString("MMM dd, yyyy") 
-                        • @ViewBag.Guests guest@(ViewBag.Guests > 1 ? "s" : "")
-                    </small>
+    <section class="search-section py-4 bg-light">
+        <div class="container">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form id="searchForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="checkIn" class="form-label">Check-in Date</label>
+                            <input type="date" class="form-control" id="checkIn"
+                                   value="@ViewBag.CheckIn.ToString("yyyy-MM-dd")"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="checkOut" class="form-label">Check-out Date</label>
+                            <input type="date" class="form-control" id="checkOut"
+                                   value="@ViewBag.CheckOut.ToString("yyyy-MM-dd")"
+                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="guests" class="form-label">Guests</label>
+                            <select class="form-control" id="guests">
+                                @for (int i = 1; i <= 6; i++)
+                                {
+                                    <option value="@i" selected="@(ViewBag.Guests == i ? "selected" : null)">@i</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-2"></i>Search
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label d-block text-muted">Nights: @ViewBag.TotalNights</label>
+                        </div>
+                    </form>
                 </div>
             </div>
-            @await Html.PartialAsync("_RoomCards", Model)
-        }
-        else
-        {
-            <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                No rooms available for the selected dates and guest count. Please try different dates or contact us directly.
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section py-5">
+        <div class="container">
+            <div id="loadingSpinner" class="text-center d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Searching available rooms...</p>
             </div>
-        }
-    </div>
+
+            <div id="roomsContainer">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (Model != null && Model.Any())
+                {
+                    <div class="row mb-3">
+                        <div class="col">
+                            <h3>Available Rooms (@Model.Count())</h3>
+                            <p class="text-muted">
+                                @ViewBag.CheckIn.ToString("dd.MM.yyyy") - @ViewBag.CheckOut.ToString("dd.MM.yyyy")
+                                (@ViewBag.TotalNights nights, @ViewBag.Guests guests)
+                            </p>
+                        </div>
+                    </div>
+                    @Html.Partial("_RoomCards", Model)
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-house-door fs-1 text-muted mb-3"></i>
+                        <h4>No Rooms Available</h4>
+                        <p class="text-muted">Try changing your dates or the number of guests</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
 </div>
 
-@section Scripts {
-<script>
-$(document).ready(function() {
-    // Set minimum dates
-    const today = new Date().toISOString().split('T')[0];
-    $('#checkIn').attr('min', today);
-    $('#checkOut').attr('min', today);
-
-    // Auto-update checkout date when checkin changes
-    $('#checkIn').on('change', function() {
-        const checkIn = new Date(this.value);
-        const nextDay = new Date(checkIn);
-        nextDay.setDate(checkIn.getDate() + 1);
-        const nextDayStr = nextDay.toISOString().split('T')[0];
-        
-        $('#checkOut').attr('min', nextDayStr);
-        
-        if ($('#checkOut').val() <= this.value) {
-            $('#checkOut').val(nextDayStr);
-        }
-    });
-
-    // Search form submission
-    $('#searchForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = {
-            checkIn: $('#checkIn').val(),
-            checkOut: $('#checkOut').val(),
-            guests: $('#guests').val()
-        };
-
-        // Validate dates
-        if (new Date(formData.checkIn) >= new Date(formData.checkOut)) {
-            alert('Check-out date must be after check-in date.');
-            return;
-        }
-
-        // Show loading spinner
-        $('#loadingSpinner').show();
-        $('#roomsContainer').hide();
-
-        // Make AJAX request
-        $.get('@Url.Action("SearchRooms")', formData)
-            .done(function(data) {
-                $('#roomsContainer').html(data).show();
-                $('#loadingSpinner').hide();
-                
-                // Update URL without page reload
-                const newUrl = '@Url.Action("Index")' + 
-                    '?checkIn=' + formData.checkIn + 
-                    '&checkOut=' + formData.checkOut + 
-                    '&guests=' + formData.guests;
-                history.pushState(null, '', newUrl);
-            })
-            .fail(function() {
-                $('#loadingSpinner').hide();
-                $('#roomsContainer').show();
-                alert('Error searching rooms. Please try again.');
-            });
-    });
-
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-
-// Book room function
-function bookRoom(roomId) {
-    const checkIn = $('#checkIn').val();
-    const checkOut = $('#checkOut').val();
-    
-    if (!checkIn || !checkOut) {
-        alert('Please select your check-in and check-out dates first.');
-        return;
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%);
+        color: #f5f5f5;
+        position: relative;
+        overflow: hidden;
     }
-    
-    // Redirect to booking form
-    window.location.href = '@Url.Action("Create")' + 
-        '?roomId=' + roomId + 
-        '&checkIn=' + checkIn + 
-        '&checkOut=' + checkOut;
-}
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/images/hero-bg.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3; /* робить фон більш темним, але зображення видно */
+            z-index: 0;
+        }
+
+        .hero-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+    .room-card {
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+    }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+    .room-image {
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .price-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #c9a14d 0%, #a5823d 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-weight: bold;
+    }
+
+    .amenities-list {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #c9a14d 0%, #a5823d 100%);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #a5823d 0%, #c9a14d 100%);
+            transform: translateY(-1px);
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('searchForm');
+        const checkInInput = document.getElementById('checkIn');
+        const checkOutInput = document.getElementById('checkOut');
+        const guestsInput = document.getElementById('guests');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const roomsContainer = document.getElementById('roomsContainer');
+        const searchBtn = form.querySelector('button[type="submit"]');
+
+        // Update check-out minimum date
+        checkInInput.addEventListener('change', function() {
+            const checkInDate = new Date(this.value);
+            const minCheckOut = new Date(checkInDate);
+            minCheckOut.setDate(minCheckOut.getDate() + 1);
+            checkOutInput.min = minCheckOut.toISOString().split('T')[0];
+            if (checkOutInput.value <= this.value) {
+                checkOutInput.value = minCheckOut.toISOString().split('T')[0];
+            }
+        });
+
+        // Handle search
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            searchBtn.disabled = true;
+            searchRooms().finally(() => searchBtn.disabled = false);
+        });
+
+        async function searchRooms() {
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
+            const guests = guestsInput.value;
+
+            if (!checkIn || !checkOut) {
+                alert('Please select check-in and check-out dates');
+                return;
+            }
+
+            loadingSpinner.classList.remove('d-none');
+            roomsContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`/Reservations/SearchRooms?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
+                const html = await response.text();
+                roomsContainer.innerHTML = html;
+                loadingSpinner.classList.add('d-none');
+
+                const url = new URL(window.location);
+                url.searchParams.set('checkIn', checkIn);
+                url.searchParams.set('checkOut', checkOut);
+                url.searchParams.set('guests', guests);
+                window.history.pushState({}, '', url);
+            } catch (err) {
+                console.error(err);
+                roomsContainer.innerHTML = '<div class="alert alert-danger">Error searching rooms. Please try again.</div>';
+                loadingSpinner.classList.add('d-none');
+            }
+        }
+    });
 </script>
-}

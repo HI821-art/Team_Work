@@ -24,11 +24,13 @@
     <input asp-for="Price" class="form-control bg-dark text-white border-dark" type="number" step="0.01" />
     <span asp-validation-for="Price" class="text-danger"></span>
 </div>
+
 <div class="form-group mb-3">
     <label asp-for="Capacity" class="control-label">Capacity</label>
     <input asp-for="Capacity" class="form-control bg-dark text-white border-dark" type="number" min="1" />
     <span asp-validation-for="Capacity" class="text-danger"></span>
 </div>
+
 <div class="form-group mb-3">
     <label asp-for="Status" class="control-label">Status</label>
     <select asp-for="Status" class="form-control bg-dark text-white border-dark">
@@ -126,6 +128,12 @@
         const MAX_SIZE_MB = 5;
         let selectedFiles = [];
 
+        // Get anti-forgery token
+        function getAntiForgeryToken() {
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            return tokenInput ? tokenInput.value : '';
+        }
+
         function updateAmenitiesField() {
             const checkboxes = document.querySelectorAll('.form-check-input');
             const selected = Array.from(checkboxes)
@@ -137,68 +145,109 @@
             }
         }
 
+        // Initialize amenities
         updateAmenitiesField();
 
+        // Form submission handler
         document.querySelector('form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const form = e.target;
 
             updateAmenitiesField();
 
-        
-            const existingInputs = gallery.querySelectorAll('input[type="hidden"]');
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Saving...';
+            submitBtn.disabled = true;
 
-        
-            const newImageUrls = await uploadImagesBeforeSubmit();
+            try {
+                // Upload any pending images first
+                const newImageUrls = await uploadImagesBeforeSubmit();
 
-       
-            newImageUrls.forEach((url, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = `ImageUrls[${existingInputs.length + index}]`;
-                input.value = url;
-                form.appendChild(input);
-            });
+                // Add new image URLs to form
+                const existingInputs = gallery.querySelectorAll('input[type="hidden"]');
+                newImageUrls.forEach((url, index) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = `ImageUrls[${existingInputs.length + index}]`;
+                    input.value = url;
+                    form.appendChild(input);
+                });
 
-            form.submit();
+                form.submit();
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Error saving room. Please try again.');
+
+                // Restore button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
         });
 
+        // Gallery item selection
         gallery.addEventListener('click', function (e) {
             if (e.target.classList.contains('gallery-image')) {
                 const galleryItem = e.target.closest('.gallery-item');
                 galleryItem.classList.toggle('selected');
                 const selectedItems = gallery.querySelectorAll('.gallery-item.selected');
                 deleteBtn.style.display = selectedItems.length > 0 ? 'inline-block' : 'none';
+                deleteBtn.innerHTML = `<i class="bi bi-trash-fill"></i> Delete (${selectedItems.length})`;
             }
         });
 
+        // Delete selected images
         deleteBtn.addEventListener('click', async function () {
-            if (confirm("Are you sure you want to delete the selected images?")) {
-                const selectedItems = gallery.querySelectorAll('.gallery-item.selected');
+            const selectedItems = gallery.querySelectorAll('.gallery-item.selected');
 
+            if (!confirm(`Are you sure you want to delete ${selectedItems.length} image(s)?`)) {
+                return;
+            }
+
+            // Show loading state
+            deleteBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Deleting...';
+            deleteBtn.disabled = true;
+
+            try {
                 for (const item of selectedItems) {
                     const input = item.querySelector('input[type="hidden"]');
                     const imageUrl = input?.value;
 
                     if (imageUrl) {
-                       await fetch('/RoomsImg/DeleteRoomImage', {
+                        const response = await fetch('/RoomsImg/DeleteRoomImage', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': getAntiForgeryToken()
+                            },
                             body: JSON.stringify({ imageUrl })
                         });
+
+                        if (!response.ok) {
+                            console.warn('Failed to delete image from server:', imageUrl);
+                        }
                     }
 
                     item.remove();
                 }
 
-                deleteBtn.style.display = 'none';
                 updateImageIndices();
+                deleteBtn.style.display = 'none';
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Error deleting images. Some files may not have been deleted from the server.');
+            } finally {
+                deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
+                deleteBtn.disabled = false;
             }
         });
 
+        // File selection
         selectFileBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleFiles);
 
+        // Drag and drop
         dropZone.addEventListener('dragover', e => {
             e.preventDefault();
             dropZone.classList.add('dragover');
@@ -218,69 +267,73 @@
         function handleFiles(e) {
             const newFiles = Array.from(e.target.files);
             const existingCount = document.querySelectorAll('.gallery-item').length;
+            const totalCount = existingCount + selectedFiles.length + newFiles.length;
 
-            if (selectedFiles.length + newFiles.length > MAX_FILES) {
-                alert(`Maximum ${MAX_FILES} images allowed. You already selected ${selectedFiles.length}.`);
-                return;
-            }
-
-            if (existingCount + newFiles.length > MAX_FILES) {
-                alert(`Maximum ${MAX_FILES} images allowed. You already have ${existingCount}.`);
+            if (totalCount > MAX_FILES) {
+                alert(`Maximum ${MAX_FILES} images allowed. Current total would be ${totalCount}.`);
                 return;
             }
 
             newFiles.forEach(file => {
                 if (!file.type.startsWith('image/')) {
-                    alert(`"${file.name}" is not a valid image.`);
+                    alert(`"${file.name}" is not a valid image file.`);
                     return;
                 }
 
                 if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                    alert(`"${file.name}" exceeds the ${MAX_SIZE_MB}MB limit.`);
+                    alert(`"${file.name}" exceeds the ${MAX_SIZE_MB}MB size limit.`);
                     return;
                 }
 
                 selectedFiles.push(file);
-
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const wrapper = document.createElement('div');
-                    wrapper.classList.add('preview-wrapper');
-
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.classList.add('gallery-image');
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('remove-image-btn');
-                    removeBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
-
-                    removeBtn.addEventListener('click', () => {
-                        preview.removeChild(wrapper);
-                        selectedFiles = selectedFiles.filter(f => f !== file);
-                    });
-
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(removeBtn);
-                    preview.appendChild(wrapper);
-                };
-                reader.readAsDataURL(file);
+                createPreviewElement(file);
             });
 
+            updateDropZoneText();
             fileInput.value = '';
         }
 
-        fileInput.addEventListener('change', function () {
-            const count = this.files.length;
+        function createPreviewElement(file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('preview-wrapper');
+
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.classList.add('gallery-image');
+                img.alt = file.name;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-image-btn');
+                removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+                removeBtn.title = 'Remove image';
+
+                removeBtn.addEventListener('click', () => {
+                    preview.removeChild(wrapper);
+                    selectedFiles = selectedFiles.filter(f => f !== file);
+                    updateDropZoneText();
+                });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                preview.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateDropZoneText() {
+            const count = selectedFiles.length;
             dropZone.querySelector('p').textContent = count > 0
-                ? `Selected ${count} file(s)`
+                ? `${count} file(s) ready to upload`
                 : 'Select files or drag them here';
-        });
+        }
 
         clearAllBtn.addEventListener('click', () => {
             selectedFiles = [];
             preview.innerHTML = '';
             fileInput.value = '';
+            updateDropZoneText();
         });
 
         async function uploadImagesBeforeSubmit() {
@@ -292,18 +345,31 @@
             try {
                 const response = await fetch('/RoomsImg/UploadRoomImages', {
                     method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
                     body: formData
                 });
 
                 if (!response.ok) {
-                    throw new Error('Upload failed');
+                    throw new Error(`Upload failed: ${response.status}`);
                 }
 
                 const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error('Upload failed: ' + (result.error || 'Unknown error'));
+                }
+
+                // Clear preview after successful upload
+                selectedFiles = [];
+                preview.innerHTML = '';
+                updateDropZoneText();
+
                 return result.images || [];
             } catch (error) {
-                alert('Image upload failed. Please try again.');
-                return [];
+                console.error('Upload error:', error);
+                throw error;
             }
         }
 
@@ -312,7 +378,9 @@
             items.forEach((item, index) => {
                 item.dataset.index = index;
                 const hiddenInput = item.querySelector('input[type="hidden"]');
-                hiddenInput.name = `ImageUrls[${index}]`;
+                if (hiddenInput) {
+                    hiddenInput.name = `ImageUrls[${index}]`;
+                }
             });
         }
     });

@@ -115,10 +115,12 @@ namespace HotelApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RoomViewModel model)
         {
-            if (!ModelState.IsValid) { 
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-            Console.WriteLine(string.Join("\n", errors));
-            return View(model); }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                Console.WriteLine(string.Join("\n", errors));
+                return View(model);
+            }
 
 
             var room = await _context.Rooms.Include(r => r.Images).FirstOrDefaultAsync(r => r.RoomId == model.RoomId);
@@ -173,7 +175,7 @@ namespace HotelApp.Controllers
             var room = await _context.Rooms.Include(r => r.Images).FirstOrDefaultAsync(r => r.RoomId == id);
             if (room != null)
             {
-                // Видалити файли з папки
+                
                 foreach (var image in room.Images)
                 {
                     var filePath = Path.Combine(_env.WebRootPath, image.ImageUrl.TrimStart('/'));

@@ -1,217 +1,95 @@
 ﻿@model IEnumerable<HotelDb.Models.Room>
 
-<div class="row g-4">
+<div class="row">
     @foreach (var room in Model)
     {
-        <div class="col-12">
-            <div class="card shadow-sm border-0 h-100 room-card">
-                <div class="row g-0">
-                    <!-- Room Image -->
-                    <div class="col-md-4">
-                        @if (room.Images?.Any() == true)
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card room-card h-100">
+                <div class="position-relative">
+                    @if (room.Images != null && room.Images.Any())
+                    {
+                        <img src="@room.Images.First().ImageUrl" 
+                             class="card-img-top room-image" 
+                             alt="@room.Type Room @room.Number">
+                        
+                        @if (room.Images.Count() > 1)
                         {
-                            <img src="@room.Images.First().ImageUrl" class="img-fluid rounded-start h-100 object-cover"
-                                 alt="@room.Name" style="min-height: 250px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <div class="bg-light rounded-start h-100 d-flex align-items-center justify-content-center"
-                                 style="min-height: 250px;">
-                                <i class="fas fa-bed fa-3x text-muted"></i>
+                            <div class="position-absolute bottom-0 start-0 m-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-images me-1"></i>+@(room.Images.Count() - 1)
+                                </span>
                             </div>
                         }
-                    </div>
-
-                    <!-- Room Details -->
-                    <div class="col-md-8">
-                        <div class="card-body h-100 d-flex flex-column">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <h5 class="card-title text-primary mb-2">@room.Name</h5>
-                                    <p class="text-muted mb-3">@room.Description</p>
-
-                                    <!-- Room Features -->
-                                    <div class="mb-3">
-                                        <div class="row g-2">
-                                            <div class="col-auto">
-                                                <span class="badge bg-light text-dark">
-                                                    <i class="fas fa-users me-1"></i>@room.Capacity guests
-                                                </span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="badge bg-light text-dark">
-                                                    <i class="fas fa-bed me-1"></i>@room.BedType
-                                                </span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="badge bg-light text-dark">
-                                                    <i class="fas fa-ruler-combined me-1"></i>@room.Size m²
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Amenities -->
-                                        <div class="row g-2 mt-2">
-                                            @if (room.HasWifi)
-                                            {
-                                                <div class="col-auto">
-                                                    <small class="text-success">
-                                                        <i class="fas fa-wifi me-1"></i>Free WiFi
-                                                    </small>
-                                                </div>
-                                            }
-                                            @if (room.HasAirConditioning)
-                                            {
-                                                <div class="col-auto">
-                                                    <small class="text-success">
-                                                        <i class="fas fa-snowflake me-1"></i>A/C
-                                                    </small>
-                                                </div>
-                                            }
-                                            @if (room.HasMiniBar)
-                                            {
-                                                <div class="col-auto">
-                                                    <small class="text-success">
-                                                        <i class="fas fa-glass-martini me-1"></i>Mini Bar
-                                                    </small>
-                                                </div>
-                                            }
-                                            @if (room.HasBalcony)
-                                            {
-                                                <div class="col-auto">
-                                                    <small class="text-success">
-                                                        <i class="fas fa-door-open me-1"></i>Balcony
-                                                    </small>
-                                                </div>
-                                            }
-                                            <div class="col-auto">
-                                                <small class="text-success">
-                                                    <i class="fas fa-bath me-1"></i>Private Bath
-                                                </small>
-                                            </div>
-                                            <div class="col-auto">
-                                                <small class="text-success">
-                                                    <i class="fas fa-tv me-1"></i>Smart TV
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Price and Booking -->
-                                <div class="col-md-4 text-md-end">
-                                    <div class="mb-3">
-                                        <div class="display-6 fw-bold text-success">$@room.Price</div>
-                                        <small class="text-muted">per night</small>
-                                        @if (ViewBag.TotalNights > 1)
-                                        {
-                                            <div class="mt-2">
-                                                <strong class="text-primary">
-                                                    Total: $@(room.Price* ViewBag.TotalNights)
-                                                </strong>
-                                                <br>
-                                                <small class="text-muted">for @ViewBag.TotalNights nights</small>
-                                            </div>
-                                        }
-                                    </div>
-
-                                    <div class="d-grid gap-2">
-                                        <button type="button" class="btn btn-success btn-lg"
-                                                onclick="bookRoom(@room.RoomId)">
-                                            <i class="fas fa-calendar-check me-2"></i>Book This Room
-                                        </button>
-                                        <a href="#" class="btn btn-outline-primary btn-sm"
-                                           data-bs-toggle="modal" data-bs-target="#roomModal@(room.RoomId)">
-                                            <i class="fas fa-info-circle me-1"></i>More Details
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                    }
+                    else
+                    {
+                        <div class="card-img-top room-image bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-house-door fs-1 text-muted"></i>
                         </div>
+                    }
+                    
+                    <div class="price-badge">
+                        ₴@room.Price.ToString("N0")<small>/night</small>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Room Details Modal -->
-        <div class="modal fade" id="roomModal@(room.RoomId)" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">@room.Name</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">@room.Type</h5>
+                        <span class="badge bg-secondary">No.@room.Number</span>
                     </div>
-                    <div class="modal-body">
-                        @if (room.Images?.Any() == true)
-                        {
-                            <div id="carousel@(room.RoomId)" class="carousel slide mb-3" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    @for (int i = 0; i < room.Images.Count(); i++)
-                                    {
-                                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                                            <img src="@room.Images.ElementAt(i).ImageUrl" class="d-block w-100"
-                                                 alt="@room.Name" style="height: 300px; object-fit: cover;">
-                                        </div>
-                                    }
-                                </div>
-                                @if (room.Images.Count() > 1)
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-people-fill me-1"></i>Up to @room.Capacity guests
+                        </small>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(room.Description))
+                    {
+                        <p class="card-text text-muted small">@room.Description</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(room.Amenities))
+                    {
+                        <div class="amenities-list mb-3">
+                            <small>
+                                @foreach (var amenity in room.Amenities.Split(',').Take(4))
                                 {
-                                    <button class="carousel-control-prev" type="button"
-                                            data-bs-target="#carousel@(room.RoomId)" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon"></span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button"
-                                            data-bs-target="#carousel@(room.RoomId)" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon"></span>
-                                    </button>
+                                    <span class="badge bg-light text-dark me-1 mb-1">@amenity.Trim()</span>
                                 }
-                            </div>
-                        }
-
-                        <h6>Room Details</h6>
-                        <p>@room.Description</p>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Specifications</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-users me-2 text-primary"></i>Capacity: @room.Capacity guests</li>
-                                    <li><i class="fas fa-bed me-2 text-primary"></i>Bed Type: @room.BedType</li>
-                                    <li><i class="fas fa-ruler-combined me-2 text-primary"></i>Size: @room.Size m²</li>
-                                    <li><i class="fas fa-dollar-sign me-2 text-primary"></i>Price: $@room.Price per night</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Amenities</h6>
-                                <ul class="list-unstyled">
-                                    @if (room.HasWifi)
-                                    {
-                                        <li><i class="fas fa-check text-success me-2"></i>Free WiFi</li>
-                                    }
-                                    @if (room.HasAirConditioning)
-                                    {
-                                        <li><i class="fas fa-check text-success me-2"></i>Air Conditioning</li>
-                                    }
-                                    @if (room.HasMiniBar)
-                                    {
-                                        <li><i class="fas fa-check text-success me-2"></i>Mini Bar</li>
-                                    }
-                                    @if (room.HasBalcony)
-                                    {
-                                        <li><i class="fas fa-check text-success me-2"></i>Balcony</li>
-                                    }
-                                    <li><i class="fas fa-check text-success me-2"></i>Private Bathroom</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Smart TV</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>24/7 Room Service</li>
-                                </ul>
+                                @if (room.Amenities.Split(',').Length > 4)
+                                {
+                                    <span class="text-muted">+@(room.Amenities.Split(',').Length - 4) more</span>
+                                }
+                            </small>
+                        </div>
+                    }
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <small class="text-muted">For @ViewBag.TotalNights nights:</small><br>
+                                <strong class="h5 text-primary mb-0">
+                                    ₴@((room.Price * ViewBag.TotalNights).ToString("N0"))
+                                </strong>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="bookRoom(@room.RoomId); $('#roomModal@(room.RoomId)').modal('hide');">
-                            <i class="fas fa-calendar-check me-2"></i>Book This Room
-                        </button>
+                        
+                        <div class="d-grid gap-2">
+                            @Html.ActionLink("Book Now", "Create", "Reservations", 
+                                new { 
+                                    roomId = room.RoomId, 
+                                    checkIn = ViewBag.CheckIn.ToString("yyyy-MM-dd"), 
+                                    checkOut = ViewBag.CheckOut.ToString("yyyy-MM-dd"),
+                                    guests = ViewBag.Guests
+                                }, 
+                                new { @class = "btn btn-primary btn-lg" })
+                            
+                            @Html.ActionLink("View Details", "Details", "Rooms", 
+                                new { id = room.RoomId }, 
+                                new { @class = "btn btn-outline-secondary" })
+                        </div>
                     </div>
                 </div>
             </div>
@@ -221,23 +99,10 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        No rooms available for the selected criteria. Please try different dates or adjust the number of guests.
+    <div class="text-center py-5">
+        <i class="bi bi-search fs-1 text-muted mb-3"></i>
+        <h4>No rooms found</h4>
+        <p class="text-muted">There are no available rooms matching your search criteria for the selected dates.</p>
+        <p class="text-muted">Try adjusting your dates or number of guests.</p>
     </div>
 }
-
-<style>
-    .room-card {
-        transition: all 0.3s ease;
-    }
-
-        .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-        }
-
-    .object-cover {
-        object-fit: cover;
-    }
-</style>

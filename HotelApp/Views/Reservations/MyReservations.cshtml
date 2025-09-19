@@ -1,0 +1,260 @@
+﻿@model IEnumerable<HotelDb.Models.Reservation>
+
+@{
+    ViewData["Title"] = "My Reservations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="my-reservations-page">
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="row mb-4 align-items-center">
+            <div class="col">
+                <h2 class="mb-2">
+                    <i class="bi bi-calendar-check-fill me-2 text-primary"></i>
+                    My Reservations
+                </h2>
+                <p class="text-muted">Manage your bookings and view your reservation history</p>
+            </div>
+            <div class="col-auto">
+                @Html.ActionLink("Book a Room", "Index", "Reservations",
+                null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Reservations List -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="row">
+                @foreach (var reservation in Model)
+                {
+                    var isUpcoming = reservation.CheckIn > DateTime.Today;
+                    var isCurrent = reservation.CheckIn <= DateTime.Today && reservation.CheckOut > DateTime.Today;
+                    var isPast = reservation.CheckOut <= DateTime.Today;
+                    var canCancel = isUpcoming && reservation.Status == "Confirmed";
+
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Room Image -->
+                                    <div class="col-lg-3 mb-3 mb-lg-0">
+                                        @if (reservation.Room.Images != null && reservation.Room.Images.Any())
+                                        {
+                                            <img src="@reservation.Room.Images.First().ImageUrl"
+                                                 class="img-fluid rounded reservation-room-image"
+                                                 alt="@reservation.Room.Type">
+                                        }
+                                        else
+                                        {
+                                            <div class="reservation-room-image bg-light rounded d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-house-door fs-2 text-muted"></i>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Reservation Details -->
+                                    <div class="col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title mb-0">@reservation.Room.Type</h5>
+                                            <span class="badge @GetStatusBadgeClass(reservation.Status)">
+                                                @GetStatusText(reservation.Status)
+                                            </span>
+                                        </div>
+
+                                        <p class="text-muted mb-2">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>
+                                            Room @reservation.Room.Number
+                                        </p>
+
+                                        <div class="reservation-dates mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-sm-6">
+                                                    <small class="text-muted d-block">Check-in</small>
+                                                    <strong>@reservation.CheckIn.ToString("dd.MM.yyyy")</strong>
+                                                    <small class="text-muted d-block">after 2:00 PM</small>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <small class="text-muted d-block">Check-out</small>
+                                                    <strong>@reservation.CheckOut.ToString("dd.MM.yyyy")</strong>
+                                                    <small class="text-muted d-block">before 12:00 PM</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p class="mb-0">
+                                            <i class="bi bi-clock-fill me-1 text-primary"></i>
+                                            <strong>@((reservation.CheckOut - reservation.CheckIn).Days) nights</strong>
+                                        </p>
+                                    </div>
+
+                                    <!-- Price and Actions -->
+                                    <div class="col-lg-3 text-lg-end">
+                                        <div class="mb-3">
+                                            <small class="text-muted d-block">Total Price</small>
+                                            <h4 class="text-primary mb-0">
+                                                ₴@((reservation.Room.Price * (reservation.CheckOut - reservation.CheckIn).Days).ToString("N0"))
+                                            </h4>
+                                            <small class="text-muted">
+                                                ₴@reservation.Room.Price.ToString("N0")/night
+                                            </small>
+                                        </div>
+
+                                        <div class="d-grid gap-2">
+                                            @Html.ActionLink("Room Details", "Details", "Rooms",
+                                            new { id = reservation.RoomId },
+                                                                        new { @class = "btn btn-outline-primary btn-sm" })
+
+                                    @if (canCancel)
+                                            {
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#cancelModal"
+                                                        data-reservation-id="@reservation.ReservationId"
+                                                        data-room-type="@reservation.Room.Type"
+                                                        data-check-in="@reservation.CheckIn.ToString("dd.MM.yyyy")">
+                                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reservation Status Bar -->
+                                @if (isUpcoming)
+                                {
+                                    <div class="mt-3 p-2 bg-info bg-opacity-10 rounded">
+                                        <small class="text-info">
+                                            <i class="bi bi-info-circle-fill me-1"></i>
+                                            @((reservation.CheckIn - DateTime.Today).Days) days until check-in
+                                        </small>
+                                    </div>
+                                }
+                                else if (isCurrent)
+                                {
+                                    <div class="mt-3 p-2 bg-success bg-opacity-10 rounded">
+                                        <small class="text-success">
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            You are currently staying in this room
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x fs-1 text-muted mb-4"></i>
+                <h4>You have no reservations yet</h4>
+                <p class="text-muted mb-4">
+                    Book a room and enjoy a comfortable stay
+                </p>
+                @Html.ActionLink("View Rooms", "Index", "Reservations",
+                null, new { @class = "btn btn-primary btn-lg" })
+        </div>
+                }
+    </div>
+</div>
+
+<!-- Cancel Reservation Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                    Cancel Reservation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this reservation?</p>
+                <div class="alert alert-warning">
+                    <strong>Room:</strong> <span id="modalRoomType"></span><br>
+                    <strong>Check-in Date:</strong> <span id="modalCheckIn"></span>
+                </div>
+                <p class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Cancellation is free up to 24 hours before check-in.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Go Back
+                </button>
+                <form method="post" action="@Url.Action("Cancel", "Reservations")" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="reservationIdToCancel">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle me-1"></i>Yes, Cancel
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelModal = document.getElementById('cancelModal');
+
+        cancelModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const reservationId = button.getAttribute('data-reservation-id');
+            const roomType = button.getAttribute('data-room-type');
+            const checkIn = button.getAttribute('data-check-in');
+
+            document.getElementById('reservationIdToCancel').value = reservationId;
+            document.getElementById('modalRoomType').textContent = roomType;
+            document.getElementById('modalCheckIn').textContent = checkIn;
+        });
+    });
+</script>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Confirmed" => "bg-success",
+            "Cancelled" => "bg-danger",
+            "Pending" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Confirmed" => "Confirmed",
+            "Cancelled" => "Cancelled",
+            "Pending" => "Pending",
+            _ => status
+        };
+    }
+}
