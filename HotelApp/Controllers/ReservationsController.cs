@@ -31,27 +31,51 @@ namespace HotelApp.Controllers
             if (defaultCheckOut <= defaultCheckIn)
                 defaultCheckOut = defaultCheckIn.AddDays(1);
 
-            var bookedRoomIds = await _context.Reservations
-                .Where(r => r.CheckOut > defaultCheckIn && r.CheckIn < defaultCheckOut && r.Status != "Cancelled")
-                .Select(r => r.RoomId)
-                .ToListAsync();
-
-            var availableRooms = await _context.Rooms
+            var rooms = await _context.Rooms
                 .Include(r => r.Images)
-                .Where(r => !bookedRoomIds.Contains(r.RoomId)
-                           && r.Capacity >= guests
-                           && r.Status == "Free")
+                .Include(r => r.Reservations)
                 .OrderBy(r => r.Type)
                 .ThenBy(r => r.Price)
                 .ToListAsync();
+
+            // Replace this block inside Index action:
+            var roomViewModels = rooms.Select(r =>
+            {
+                var lastBooking = r.Reservations
+                    .Where(res => res.Status != "Cancelled" && res.CheckOut >= DateTime.Today)
+                    .OrderByDescending(res => res.CheckOut)
+                    .FirstOrDefault();
+
+                return new RoomViewModel
+                {
+                    RoomId = r.RoomId,
+                    Number = r.Number,
+                    Type = r.Type,
+                    Price = r.Price,
+                    Capacity = r.Capacity,
+                    Status = r.Status,
+                    Description = r.Description,
+                    Amenities = r.Amenities,
+                    ImageUrls = r.Images.Select(i => i.ImageUrl).ToList(),
+                    Reservations = _context.Reservations
+                    .Where(res => res.RoomId == r.RoomId && res.Status != "Cancelled")
+                    .ToList(),
+                    LastBookedUntil = _context.Reservations
+                    .Where(res => res.RoomId == r.RoomId && res.Status != "Cancelled")
+                    .OrderByDescending(res => res.CheckOut)
+                    .Select(res => (DateTime?)res.CheckOut)
+                    .FirstOrDefault()
+                };
+            }).ToList();
 
             ViewBag.CheckIn = defaultCheckIn;
             ViewBag.CheckOut = defaultCheckOut;
             ViewBag.Guests = guests;
             ViewBag.TotalNights = (defaultCheckOut - defaultCheckIn).Days;
 
-            return View(availableRooms);
+            return View(roomViewModels);
         }
+
 
         // AJAX endpoint for searching rooms
         [HttpGet]
@@ -106,17 +130,6 @@ namespace HotelApp.Controllers
             if (validCheckOut <= validCheckIn)
                 validCheckOut = validCheckIn.AddDays(1);
 
-            var isRoomFree = !await _context.Reservations.AnyAsync(r =>
-                r.RoomId == roomId &&
-                r.CheckOut > validCheckIn &&
-                r.CheckIn < validCheckOut &&
-                r.Status != "Cancelled");
-
-            if (!isRoomFree)
-            {
-                TempData["Error"] = "The room is not available for the selected dates";
-                return RedirectToAction("Index", new { checkIn = validCheckIn, checkOut = validCheckOut, guests });
-            }
 
             var model = new ReservationViewModel
             {
@@ -258,5 +271,52 @@ namespace HotelApp.Controllers
             TempData["Success"] = "Reservation cancelled";
             return RedirectToAction("MyReservations");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Extend(int reservationId, DateTime newCheckOut)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var reservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => r.ReservationId == reservationId && r.UserId == user.Id);
+
+            if (reservation == null)
+                return NotFound();
+
+            if (newCheckOut <= reservation.CheckOut)
+            {
+                TempData["Error"] = "New check-out date must be after current check-out.";
+                return RedirectToAction("MyReservations");
+            }
+
+            var conflict = await _context.Reservations.AnyAsync(r =>
+                r.RoomId == reservation.RoomId &&
+                r.CheckIn < newCheckOut &&
+                r.CheckOut > reservation.CheckOut &&
+                r.Status != "Cancelled" &&
+                r.ReservationId != reservationId);
+
+            if (conflict)
+            {
+                TempData["Error"] = "Cannot extend reservation. Room is already booked for these dates.";
+                return RedirectToAction("MyReservations");
+            }
+
+            reservation.CheckOut = newCheckOut;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Reservation extended successfully.";
+            return RedirectToAction("MyReservations");
+        }
+        [HttpGet]
+        public async Task<IActionResult> BookedDates(int roomId)
+        {
+            var reservations = await _context.Reservations
+                .Where(r => r.RoomId == roomId && r.Status != "Cancelled")
+                .Select(r => new { r.CheckIn, r.CheckOut })
+                .ToListAsync();
+
+            return Json(reservations);
+        }
+
     }
 }

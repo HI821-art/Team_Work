@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HotelDb.Models.Room>
+﻿@model IEnumerable<HotelDb.Models.RoomViewModel>
 
 <div class="row">
     @foreach (var room in Model)
@@ -6,17 +6,17 @@
         <div class="col-lg-6 col-xl-4 mb-4">
             <div class="card room-card h-100">
                 <div class="position-relative">
-                    @if (room.Images != null && room.Images.Any())
+                    @if (room.ImageUrls != null && room.ImageUrls.Any())
                     {
-                        <img src="@room.Images.First().ImageUrl" 
-                             class="card-img-top room-image" 
-                             alt="@room.Type Room @room.Number">
+                       <img src="@room.ImageUrls.First()" 
+     class="card-img-top room-image" 
+     alt="@room.Type Room @room.Number">
                         
-                        @if (room.Images.Count() > 1)
+                        @if (room.ImageUrls.Count() > 1)
                         {
                             <div class="position-absolute bottom-0 start-0 m-3">
                                 <span class="badge bg-dark bg-opacity-75">
-                                    <i class="bi bi-images me-1"></i>+@(room.Images.Count() - 1)
+                                    <i class="bi bi-images me-1"></i>+@(room.ImageUrls.Count() - 1)
                                 </span>
                             </div>
                         }

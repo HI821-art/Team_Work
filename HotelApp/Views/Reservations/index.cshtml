@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HotelDb.Models.Room>
+﻿@model IEnumerable<HotelDb.Models.RoomViewModel>
 
 @{
     ViewData["Title"] = "Room Booking";
@@ -6,104 +6,95 @@
 }
 
 <div class="reservation-page">
-    <!-- Hero Section -->
     <section class="hero-section text-white py-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold">Book Your Perfect Room</h1>
-                    <p class="lead">Select your dates and find the best rooms for your stay</p>
+                    <h1 class="display-4 fw-bold">Room Booking</h1>
+                    <p class="lead">See all rooms and their availability</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Search Form -->
-    <section class="search-section py-4 bg-light">
-        <div class="container">
-            <div class="card shadow">
-                <div class="card-body">
-                    <form id="searchForm" class="row g-3">
-                        <div class="col-md-3">
-                            <label for="checkIn" class="form-label">Check-in Date</label>
-                            <input type="date" class="form-control" id="checkIn"
-                                   value="@ViewBag.CheckIn.ToString("yyyy-MM-dd")"
-                                   min="@DateTime.Today.ToString("yyyy-MM-dd")">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="checkOut" class="form-label">Check-out Date</label>
-                            <input type="date" class="form-control" id="checkOut"
-                                   value="@ViewBag.CheckOut.ToString("yyyy-MM-dd")"
-                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="guests" class="form-label">Guests</label>
-                            <select class="form-control" id="guests">
-                                @for (int i = 1; i <= 6; i++)
-                                {
-                                    <option value="@i" selected="@(ViewBag.Guests == i ? "selected" : null)">@i</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label d-block">&nbsp;</label>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-search me-2"></i>Search
-                            </button>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label d-block text-muted">Nights: @ViewBag.TotalNights</label>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Results Section -->
     <section class="results-section py-5">
         <div class="container">
-            <div id="loadingSpinner" class="text-center d-none">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-2">Searching available rooms...</p>
-            </div>
-
             <div id="roomsContainer">
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        @TempData["Error"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-
                 @if (Model != null && Model.Any())
                 {
-                    <div class="row mb-3">
-                        <div class="col">
-                            <h3>Available Rooms (@Model.Count())</h3>
-                            <p class="text-muted">
-                                @ViewBag.CheckIn.ToString("dd.MM.yyyy") - @ViewBag.CheckOut.ToString("dd.MM.yyyy")
-                                (@ViewBag.TotalNights nights, @ViewBag.Guests guests)
-                            </p>
-                        </div>
+                    <div class="row g-4">
+                        @foreach (var room in Model)
+                        {
+                            var lastBooking = room.Reservations?.OrderByDescending(r => r.CheckOut).FirstOrDefault();
+                            var availableFrom = lastBooking != null && lastBooking.CheckOut >= DateTime.Today
+                            ? lastBooking.CheckOut.AddDays(1)
+                            : DateTime.Today;
+                            <div class="col-md-4">
+                                <div class="card shadow-sm h-100">
+                                    @if (room.ImageUrls != null && room.ImageUrls.Any())
+                                    {
+                                        <img src="@room.ImageUrls.First()" class="card-img-top room-image" alt="Room Image">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+                                            <i class="bi bi-house-door fs-1 text-muted"></i>
+                                        </div>
+                                    }
+
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <h5 class="card-title mb-0">@room.Type</h5>
+                                            <span class="badge bg-primary">No.@room.Number</span>
+                                        </div>
+                                        <p class="mb-1"><i class="bi bi-people-fill me-1"></i>Up to @room.Capacity guests</p>
+                                        <p class="mb-1"><i class="bi bi-currency-dollar me-1"></i>₴@room.Price.ToString("N0") per night</p>
+
+                                        @if (lastBooking != null && lastBooking.CheckOut >= DateTime.Today)
+                                        {
+                                            <p class="mb-0 text-danger">
+                                                <i class="bi bi-calendar-x me-1"></i>
+                                                Booked until: @lastBooking.CheckOut.ToString("dd.MM.yyyy")
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p class="mb-0 text-success">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                Available from: @availableFrom.ToString("dd.MM.yyyy")
+                                            </p>
+                                        }
+
+    <a href="@Url.Action("Create", "Reservations", new { 
+        roomId = room.RoomId, 
+        checkIn = ViewBag.CheckIn?.ToString("yyyy-MM-dd"), 
+        checkOut = ViewBag.CheckOut?.ToString("yyyy-MM-dd"), 
+        guests = ViewBag.Guests 
+    })" class="btn btn-outline-primary w-100 mt-2">
+    Book Now
+</a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                    @Html.Partial("_RoomCards", Model)
                 }
                 else
                 {
                     <div class="text-center py-5">
                         <i class="bi bi-house-door fs-1 text-muted mb-3"></i>
-                        <h4>No Rooms Available</h4>
-                        <p class="text-muted">Try changing your dates or the number of guests</p>
+                        <h4>No Rooms Found</h4>
+                        <p class="text-muted">Please check back later</p>
                     </div>
                 }
             </div>
         </div>
     </section>
 </div>
+
+
 
 <style>
     .hero-section {
@@ -175,64 +166,3 @@
             transform: translateY(-1px);
         }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('searchForm');
-        const checkInInput = document.getElementById('checkIn');
-        const checkOutInput = document.getElementById('checkOut');
-        const guestsInput = document.getElementById('guests');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const roomsContainer = document.getElementById('roomsContainer');
-        const searchBtn = form.querySelector('button[type="submit"]');
-
-        // Update check-out minimum date
-        checkInInput.addEventListener('change', function() {
-            const checkInDate = new Date(this.value);
-            const minCheckOut = new Date(checkInDate);
-            minCheckOut.setDate(minCheckOut.getDate() + 1);
-            checkOutInput.min = minCheckOut.toISOString().split('T')[0];
-            if (checkOutInput.value <= this.value) {
-                checkOutInput.value = minCheckOut.toISOString().split('T')[0];
-            }
-        });
-
-        // Handle search
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            searchBtn.disabled = true;
-            searchRooms().finally(() => searchBtn.disabled = false);
-        });
-
-        async function searchRooms() {
-            const checkIn = checkInInput.value;
-            const checkOut = checkOutInput.value;
-            const guests = guestsInput.value;
-
-            if (!checkIn || !checkOut) {
-                alert('Please select check-in and check-out dates');
-                return;
-            }
-
-            loadingSpinner.classList.remove('d-none');
-            roomsContainer.innerHTML = '';
-
-            try {
-                const response = await fetch(`/Reservations/SearchRooms?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
-                const html = await response.text();
-                roomsContainer.innerHTML = html;
-                loadingSpinner.classList.add('d-none');
-
-                const url = new URL(window.location);
-                url.searchParams.set('checkIn', checkIn);
-                url.searchParams.set('checkOut', checkOut);
-                url.searchParams.set('guests', guests);
-                window.history.pushState({}, '', url);
-            } catch (err) {
-                console.error(err);
-                roomsContainer.innerHTML = '<div class="alert alert-danger">Error searching rooms. Please try again.</div>';
-                loadingSpinner.classList.add('d-none');
-            }
-        }
-    });
-</script>

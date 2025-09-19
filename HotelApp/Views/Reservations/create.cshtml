@@ -7,7 +7,6 @@
 
 <div class="reservation-create-page">
     <div class="container py-4">
-        <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">@Html.ActionLink("Home", "Index", "Home")</li>
@@ -28,9 +27,7 @@
                                     @for (int i = 0; i < Model.Room.Images.Count(); i++)
                                     {
                                         <div class="carousel-item @(i == 0 ? "active" : "")">
-                                            <img src="@Model.Room.Images.ElementAt(i).ImageUrl" 
-                                                 class="d-block w-100 room-main-image" 
-                                                 alt="Room Image">
+                                            <img src="@Model.Room.Images.ElementAt(i).ImageUrl" class="d-block w-100 room-main-image" alt="Room Image">
                                         </div>
                                     }
                                 </div>
@@ -45,8 +42,7 @@
                                     <div class="carousel-indicators">
                                         @for (int i = 0; i < Model.Room.Images.Count(); i++)
                                         {
-                                            <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="@i" 
-                                                    class="@(i == 0 ? "active" : "")" aria-label="Slide @(i+1)"></button>
+                                            <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
                                         }
                                     </div>
                                 }
@@ -59,29 +55,23 @@
                             </div>
                         }
                     </div>
-                    
+
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <h4 class="card-title mb-0">@Model.Room.Type</h4>
                             <span class="badge bg-primary fs-6">No.@Model.Room.Number</span>
                         </div>
-                        
+
                         <div class="room-info mb-3">
-                            <p class="mb-2">
-                                <i class="bi bi-people-fill text-primary me-2"></i>
-                                Up to @Model.Room.Capacity guests
-                            </p>
-                            <p class="mb-2">
-                                <i class="bi bi-currency-dollar text-primary me-2"></i>
-                                ₴@Model.Room.Price.ToString("N0") per night
-                            </p>
+                            <p class="mb-2"><i class="bi bi-people-fill text-primary me-2"></i>Up to @Model.Room.Capacity guests</p>
+                            <p class="mb-2"><i class="bi bi-currency-dollar text-primary me-2"></i>₴@Model.Room.Price.ToString("N0") per night</p>
                         </div>
-                        
+
                         @if (!string.IsNullOrEmpty(Model.Room.Description))
                         {
                             <p class="text-muted mb-3">@Model.Room.Description</p>
                         }
-                        
+
                         @if (!string.IsNullOrEmpty(Model.Room.Amenities))
                         {
                             <div class="amenities mb-4">
@@ -94,8 +84,7 @@
                                 </div>
                             </div>
                         }
-                        
-                        <!-- Price Summary -->
+
                         <div class="price-summary bg-light p-3 rounded">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>₴@Model.Room.Price.ToString("N0") × <span id="nightsCount">@((Model.CheckOut - Model.CheckIn).Days)</span> nights</span>
@@ -115,10 +104,7 @@
             <div class="col-lg-7">
                 <div class="card shadow-lg">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
-                            <i class="bi bi-calendar-check me-2"></i>
-                            Booking Form
-                        </h5>
+                        <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Booking Form</h5>
                     </div>
                     <div class="card-body p-4">
                         @if (!ViewData.ModelState.IsValid)
@@ -133,113 +119,62 @@
                         {
                             @Html.AntiForgeryToken()
                             @Html.HiddenFor(m => m.RoomId)
-                            @Html.HiddenFor(m => m.Room)
 
-                            <!-- Dates Section -->
                             <div class="mb-4">
-                                <h6 class="border-bottom pb-2 mb-3">
-                                    <i class="bi bi-calendar-range me-2"></i>Stay Dates
-                                </h6>
+                                <h6 class="border-bottom pb-2 mb-3"><i class="bi bi-calendar-range me-2"></i>Stay Dates</h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         @Html.LabelFor(m => m.CheckIn, "Check-in", new { @class = "form-label" })
-                                        @Html.EditorFor(m => m.CheckIn, new { 
-                                            htmlAttributes = new { 
-                                                @class = "form-control", 
-                                                @type = "date",
-                                                @min = DateTime.Today.ToString("yyyy-MM-dd"),
-                                                @id = "checkInDate"
-                                            } 
-                                        })
+                                        @Html.EditorFor(m => m.CheckIn, new { htmlAttributes = new { @class = "form-control", @id = "checkInDate" } })
                                         @Html.ValidationMessageFor(m => m.CheckIn, "", new { @class = "invalid-feedback d-block" })
                                     </div>
                                     <div class="col-md-6">
                                         @Html.LabelFor(m => m.CheckOut, "Check-out", new { @class = "form-label" })
-                                        @Html.EditorFor(m => m.CheckOut, new { 
-                                            htmlAttributes = new { 
-                                                @class = "form-control", 
-                                                @type = "date",
-                                                @min = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"),
-                                                @id = "checkOutDate"
-                                            } 
-                                        })
+                                        @Html.EditorFor(m => m.CheckOut, new { htmlAttributes = new { @class = "form-control", @id = "checkOutDate" } })
                                         @Html.ValidationMessageFor(m => m.CheckOut, "", new { @class = "invalid-feedback d-block" })
                                     </div>
                                 </div>
                                 <div class="mt-2">
-                                    <small class="text-muted">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Check-in after 14:00, check-out before 12:00
-                                    </small>
+                                    <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Check-in after 14:00, check-out before 12:00</small>
                                 </div>
                             </div>
 
-                            <!-- Guest Information -->
                             <div class="mb-4">
-                                <h6 class="border-bottom pb-2 mb-3">
-                                    <i class="bi bi-person-fill me-2"></i>Guest Information
-                                </h6>
+                                <h6 class="border-bottom pb-2 mb-3"><i class="bi bi-person-fill me-2"></i>Guest Information</h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         @Html.LabelFor(m => m.FullName, "Full Name", new { @class = "form-label" })
-                                        @Html.EditorFor(m => m.FullName, new { 
-                                            htmlAttributes = new { 
-                                                @class = "form-control",
-                                                @placeholder = "First and Last Name"
-                                            } 
-                                        })
+                                        @Html.EditorFor(m => m.FullName, new { htmlAttributes = new { @class = "form-control", @placeholder = "First and Last Name" } })
                                         @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "invalid-feedback d-block" })
                                     </div>
                                     <div class="col-md-6">
                                         @Html.LabelFor(m => m.Email, "Email", new { @class = "form-label" })
-                                        @Html.EditorFor(m => m.Email, new { 
-                                            htmlAttributes = new { 
-                                                @class = "form-control",
-                                                @type = "email",
-                                                @placeholder = "example@email.com"
-                                            } 
-                                        })
+                                        @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", @type = "email", @placeholder = "example@email.com" } })
                                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "invalid-feedback d-block" })
                                     </div>
                                     <div class="col-md-6">
                                         @Html.LabelFor(m => m.Phone, "Phone", new { @class = "form-label" })
-                                        @Html.EditorFor(m => m.Phone, new { 
-                                            htmlAttributes = new { 
-                                                @class = "form-control",
-                                                @placeholder = "+380..."
-                                            } 
-                                        })
+                                        @Html.EditorFor(m => m.Phone, new { htmlAttributes = new { @class = "form-control", @placeholder = "+380..." } })
                                         @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "invalid-feedback d-block" })
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Terms and Conditions -->
                             <div class="mb-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="acceptTerms" required>
                                     <label class="form-check-label" for="acceptTerms">
-                                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">booking terms</a> 
-                                        and <a href="#">privacy policy</a>
+                                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">booking terms</a> and <a href="#">privacy policy</a>
                                     </label>
-                                    <div class="invalid-feedback">
-                                        You must agree to the terms
-                                    </div>
+                                    <div class="invalid-feedback">You must agree to the terms</div>
                                 </div>
                             </div>
 
-                            <!-- Submit Button -->
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-credit-card me-2"></i>
-                                    Confirm Booking
+                                    <i class="bi bi-credit-card me-2"></i>Confirm Booking
                                 </button>
-                                @Html.ActionLink("Back to Search", "Index", "Reservations", 
-                                    new { 
-                                        checkIn = Model.CheckIn.ToString("yyyy-MM-dd"), 
-                                        checkOut = Model.CheckOut.ToString("yyyy-MM-dd") 
-                                    }, 
-                                    new { @class = "btn btn-outline-secondary" })
+                                @Html.ActionLink("Back to Search", "Index", "Reservations", new { checkIn = Model.CheckIn.ToString("yyyy-MM-dd"), checkOut = Model.CheckOut.ToString("yyyy-MM-dd") }, new { @class = "btn btn-outline-secondary" })
                             </div>
                         }
                     </div>
@@ -264,7 +199,6 @@
                     <li>50% fee if cancelled within 24 hours</li>
                     <li>100% fee for no-show</li>
                 </ul>
-                
                 <h6>House Rules</h6>
                 <ul>
                     <li>Check-in: after 14:00</li>
@@ -272,7 +206,6 @@
                     <li>No smoking in rooms</li>
                     <li>No pets allowed</li>
                 </ul>
-                
                 <h6>Payment</h6>
                 <ul>
                     <li>Full payment at check-in</li>
@@ -286,3 +219,43 @@
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roomId = @Model.RoomId;
+        const checkInInput = document.getElementById('checkInDate');
+        const checkOutInput = document.getElementById('checkOutDate');
+
+        fetch(`/Reservations/BookedDates?roomId=${roomId}`)
+            .then(res => res.json())
+            .then(data => {
+                const disabledRanges = data.map(d => ({
+                    from: d.checkIn,
+                    to: d.checkOut
+                }));
+
+                const checkOutInstance = flatpickr(checkOutInput, {
+                    dateFormat: "Y-m-d",
+                    minDate: new Date(Date.now() + 24*60*60*1000),
+                    disable: disabledRanges
+                });
+
+                flatpickr(checkInInput, {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    disable: disabledRanges,
+                    onChange: function(selectedDates) {
+                        if(selectedDates[0]) {
+                            const minCheckout = new Date(selectedDates[0].getTime() + 24*60*60*1000);
+                            checkOutInstance.set('minDate', minCheckout);
+                            if(new Date(checkOutInput.value) <= minCheckout){
+                                checkOutInput.value = minCheckout.toISOString().split('T')[0];
+                            }
+                        }
+                    }
+                });
+            });
+    });
+</script>
