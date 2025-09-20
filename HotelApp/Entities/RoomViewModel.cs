@@ -25,10 +25,15 @@ namespace HotelDb.Models
 
         public string? Description { get; set; }
 
-
         [StringLength(500, ErrorMessage = "Amenities list is too long.")]
         public string? Amenities { get; set; }
 
         public List<string> ImageUrls { get; set; } = new List<string>();
+
+        // Додаємо поле для останньої броні
+        public DateTime? LastBookedUntil { get; set; }
+
+        public List<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
+
 }

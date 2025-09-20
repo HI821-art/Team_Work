@@ -1,0 +1,108 @@
+﻿@model IEnumerable<HotelDb.Models.RoomViewModel>
+
+<div class="row">
+    @foreach (var room in Model)
+    {
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card room-card h-100">
+                <div class="position-relative">
+                    @if (room.ImageUrls != null && room.ImageUrls.Any())
+                    {
+                       <img src="@room.ImageUrls.First()" 
+     class="card-img-top room-image" 
+     alt="@room.Type Room @room.Number">
+                        
+                        @if (room.ImageUrls.Count() > 1)
+                        {
+                            <div class="position-absolute bottom-0 start-0 m-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-images me-1"></i>+@(room.ImageUrls.Count() - 1)
+                                </span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="card-img-top room-image bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-house-door fs-1 text-muted"></i>
+                        </div>
+                    }
+                    
+                    <div class="price-badge">
+                        ₴@room.Price.ToString("N0")<small>/night</small>
+                    </div>
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">@room.Type</h5>
+                        <span class="badge bg-secondary">No.@room.Number</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-people-fill me-1"></i>Up to @room.Capacity guests
+                        </small>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(room.Description))
+                    {
+                        <p class="card-text text-muted small">@room.Description</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(room.Amenities))
+                    {
+                        <div class="amenities-list mb-3">
+                            <small>
+                                @foreach (var amenity in room.Amenities.Split(',').Take(4))
+                                {
+                                    <span class="badge bg-light text-dark me-1 mb-1">@amenity.Trim()</span>
+                                }
+                                @if (room.Amenities.Split(',').Length > 4)
+                                {
+                                    <span class="text-muted">+@(room.Amenities.Split(',').Length - 4) more</span>
+                                }
+                            </small>
+                        </div>
+                    }
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <small class="text-muted">For @ViewBag.TotalNights nights:</small><br>
+                                <strong class="h5 text-primary mb-0">
+                                    ₴@((room.Price * ViewBag.TotalNights).ToString("N0"))
+                                </strong>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            @Html.ActionLink("Book Now", "Create", "Reservations", 
+                                new { 
+                                    roomId = room.RoomId, 
+                                    checkIn = ViewBag.CheckIn.ToString("yyyy-MM-dd"), 
+                                    checkOut = ViewBag.CheckOut.ToString("yyyy-MM-dd"),
+                                    guests = ViewBag.Guests
+                                }, 
+                                new { @class = "btn btn-primary btn-lg" })
+                            
+                            @Html.ActionLink("View Details", "Details", "Rooms", 
+                                new { id = room.RoomId }, 
+                                new { @class = "btn btn-outline-secondary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="bi bi-search fs-1 text-muted mb-3"></i>
+        <h4>No rooms found</h4>
+        <p class="text-muted">There are no available rooms matching your search criteria for the selected dates.</p>
+        <p class="text-muted">Try adjusting your dates or number of guests.</p>
+    </div>
+}

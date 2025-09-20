@@ -1,68 +1,76 @@
 ﻿using HotelDb.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelApp.Controllers
 {
     public class RoomsImgController : Controller
     {
-       
         private readonly IWebHostEnvironment _env;
 
-        public RoomsImgController( IWebHostEnvironment env)
+        public RoomsImgController(IWebHostEnvironment env)
         {
-           
             _env = env;
         }
 
-
-        // POST: Rooms/UploadRoomImages
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> UploadRoomImages(List<IFormFile> RoomImages)
         {
-            var imageUrls = new List<string>();
+            if (RoomImages == null || RoomImages.Count == 0)
+                return Json(new { success = false, error = "No files uploaded." });
+
             var uploadsFolder = Path.Combine(_env.WebRootPath, "images", "rooms");
             Directory.CreateDirectory(uploadsFolder);
 
+            var imageUrls = new List<string>();
+
             foreach (var file in RoomImages)
             {
-                if (file.Length > 0)
-                {
-                    var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                if (file.Length == 0) continue;
 
-                    using var stream = new FileStream(filePath, FileMode.Create);
-                    await file.CopyToAsync(stream);
+                var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                if (!allowed.Contains(ext)) continue;
 
-                    var relativePath = "/images/rooms/" + uniqueFileName;
-                    imageUrls.Add(relativePath);
-                }
+                var uniqueFileName = $"{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+
+                imageUrls.Add($"/images/rooms/{uniqueFileName}");
             }
 
             return Json(new { success = true, images = imageUrls });
         }
 
+
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteRoomImage([FromBody] ImageDeleteRequest request)
         {
             if (string.IsNullOrWhiteSpace(request?.ImageUrl))
-                return BadRequest();
+                return BadRequest("Image URL is required");
 
             var decodedUrl = Uri.UnescapeDataString(request.ImageUrl);
             var filePath = Path.Combine(_env.WebRootPath, decodedUrl.TrimStart('/'));
+
+            Console.WriteLine($"Attempting to delete: {filePath}");
 
             try
             {
                 if (System.IO.File.Exists(filePath))
                 {
                     System.IO.File.Delete(filePath);
-                    Console.WriteLine($"Deleted: {filePath}");
+                    Console.WriteLine($"Successfully deleted: {filePath}");
+                    return Json(new { success = true });
                 }
                 else
                 {
                     Console.WriteLine($"File not found: {filePath}");
+                    return Json(new { success = false, error = "File not found" });
                 }
-
-                return Json(new { success = true });
             }
             catch (Exception ex)
             {

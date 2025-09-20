@@ -1,0 +1,168 @@
+﻿@model IEnumerable<HotelDb.Models.RoomViewModel>
+
+@{
+    ViewData["Title"] = "Room Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="reservation-page">
+    <section class="hero-section text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold">Room Booking</h1>
+                    <p class="lead">See all rooms and their availability</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="results-section py-5">
+        <div class="container">
+            <div id="roomsContainer">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="row g-4">
+                        @foreach (var room in Model)
+                        {
+                            var lastBooking = room.Reservations?.OrderByDescending(r => r.CheckOut).FirstOrDefault();
+                            var availableFrom = lastBooking != null && lastBooking.CheckOut >= DateTime.Today
+                            ? lastBooking.CheckOut.AddDays(1)
+                            : DateTime.Today;
+                            <div class="col-md-4">
+                                <div class="card shadow-sm h-100">
+                                    @if (room.ImageUrls != null && room.ImageUrls.Any())
+                                    {
+                                        <img src="@room.ImageUrls.First()" class="card-img-top room-image" alt="Room Image">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+                                            <i class="bi bi-house-door fs-1 text-muted"></i>
+                                        </div>
+                                    }
+
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <h5 class="card-title mb-0">@room.Type</h5>
+                                            <span class="badge bg-primary">No.@room.Number</span>
+                                        </div>
+                                        <p class="mb-1"><i class="bi bi-people-fill me-1"></i>Up to @room.Capacity guests</p>
+                                        <p class="mb-1"><i class="bi bi-currency-dollar me-1"></i>₴@room.Price.ToString("N0") per night</p>
+
+                                        @if (lastBooking != null && lastBooking.CheckOut >= DateTime.Today)
+                                        {
+                                            <p class="mb-0 text-danger">
+                                                <i class="bi bi-calendar-x me-1"></i>
+                                                Booked until: @lastBooking.CheckOut.ToString("dd.MM.yyyy")
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p class="mb-0 text-success">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                Available from: @availableFrom.ToString("dd.MM.yyyy")
+                                            </p>
+                                        }
+
+    <a href="@Url.Action("Create", "Reservations", new { 
+        roomId = room.RoomId, 
+        checkIn = ViewBag.CheckIn?.ToString("yyyy-MM-dd"), 
+        checkOut = ViewBag.CheckOut?.ToString("yyyy-MM-dd"), 
+        guests = ViewBag.Guests 
+    })" class="btn btn-outline-primary w-100 mt-2">
+    Book Now
+</a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-house-door fs-1 text-muted mb-3"></i>
+                        <h4>No Rooms Found</h4>
+                        <p class="text-muted">Please check back later</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%);
+        color: #f5f5f5;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/images/hero-bg.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3; /* робить фон більш темним, але зображення видно */
+            z-index: 0;
+        }
+
+        .hero-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+    .room-card {
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+    }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+    .room-image {
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .price-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #c9a14d 0%, #a5823d 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 25px;
+        font-weight: bold;
+    }
+
+    .amenities-list {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #c9a14d 0%, #a5823d 100%);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #a5823d 0%, #c9a14d 100%);
+            transform: translateY(-1px);
+        }
+</style>
