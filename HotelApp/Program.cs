@@ -6,21 +6,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Вибираємо рядок підключення залежно від середовища
-string connectionString;
-
-if (builder.Environment.IsDevelopment())
-{
-    connectionString = builder.Configuration.GetConnectionString("HotelDb")
-        ?? throw new InvalidOperationException("Connection string 'HotelDbLocal' not found.");
-}
-else
-{
-    connectionString = builder.Configuration.GetConnectionString("HotelDbSomee")
-        ?? throw new InvalidOperationException("Connection string 'HotelDbSomee' not found.");
-}
 
 builder.Services.AddDbContext<HotelDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelDbSomee")));
+
 
 builder.Services.AddDefaultIdentity<User>(options =>
 {
@@ -45,7 +34,7 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<HotelDbContext>();
-        db.Database.EnsureCreated();
+        db.Database.Migrate();
 
         // Створюємо ролі та дефолтного адміністратора
         await RoleInitializer.SeedRolesAndAdminAsync(scope.ServiceProvider);
