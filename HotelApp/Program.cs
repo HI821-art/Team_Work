@@ -2,6 +2,7 @@ using HotelDb.Data;
 using HotelDb.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,9 @@ builder.Services.AddDefaultIdentity<User>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<HotelDbContext>()
 .AddDefaultTokenProviders();
+
+Env.Load(); 
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
