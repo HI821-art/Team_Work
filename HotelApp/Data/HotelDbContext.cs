@@ -29,8 +29,17 @@ namespace HotelDb.Data
 
             if (!optionsBuilder.IsConfigured)
             {
-                var str = "workstation id=HotelDb.mssql.somee.com;packet size=4096;user id=marexx00_SQLLogin_1;pwd=njvnxaefpn;data source=HotelDb.mssql.somee.com;persist security info=False;initial catalog=HotelDb;TrustServerCertificate=True";
-                optionsBuilder.UseSqlServer(str);
+                
+                var connectionString = Environment.GetEnvironmentVariable("HotelDbSomee");
+
+                if (!string.IsNullOrEmpty(connectionString))
+                {
+                    optionsBuilder.UseSqlServer(connectionString);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Connection string 'HotelDbSomee' is not set in environment variables.");
+                }
             }
         }
 

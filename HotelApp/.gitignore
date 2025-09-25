@@ -1,0 +1,4 @@
+﻿# Add this line to your .gitignore file to hide secrets/config files
+appsettings.*.json
+secrets.json
+.env
