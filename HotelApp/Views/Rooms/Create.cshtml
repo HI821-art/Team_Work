@@ -5,29 +5,59 @@
     Layout = "_Layout";
 }
 
-<section class="form-section py-4">
+<section class="form-section">
     <div class="container">
-        <h1 class="text-center mb-4 fw-bold text-white">Create Room</h1>
-        <div class="row">
-            <div class="col-md-5 mx-auto">
-                <div class="card bg-dark text-white shadow-lg rounded-4 p-4">
-                    <form asp-action="Create" method="post" enctype="multipart/form-data">
-                        @await Html.PartialAsync("_RoomForm", Model)
-                        <div class="form-group text-center">
-                            <input type="submit" value="Create" class="btn btn-primary" />
-                        </div>
-                    </form>
-                </div>
+        <h1 class="text-center mb-4">Create Room</h1>
+        <hr />
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </div>
-        <div class="text-center mt-3">
-            <a class="btn btn-outline-light" asp-action="Index">Back to List</a>
+        }
+
+        <div class="row">
+            <div class="col-md-6 col-lg-5 mx-auto">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    @await Html.PartialAsync("_RoomForm", Model)
+
+                    <div class="form-group text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>Create Room
+                        </button>
+                        <a class="btn btn-secondary btn-lg ms-3" asp-action="Index">
+                            <i class="bi bi-arrow-left me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </section>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
+        // Update amenities hidden field from checkboxes
+        window.updateAmenitiesField = function() {
+            const checkboxes = document.querySelectorAll('.form-check-input[type="checkbox"]');
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value.trim());
+            const hiddenField = document.getElementById('AmenitiesField');
+            if (hiddenField) {
+                hiddenField.value = selected.join(', ');
+            }
+        };
+
+        // Image preview
         document.querySelectorAll('.image-url-input').forEach(input => {
             input.addEventListener('input', function () {
                 const previewId = this.dataset.previewId;
@@ -41,9 +71,14 @@
                 }
             });
         });
-    </script>
 
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+        // Auto-dismiss success message after 5 seconds
+        setTimeout(function() {
+            const alert = document.querySelector('.alert-success');
+            if (alert) {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 150);
+            }
+        }, 5000);
+    </script>
 }
