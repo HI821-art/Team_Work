@@ -5,23 +5,22 @@
     @foreach (var room in Model)
     {
         <div class="col-md-4 mb-4">
-            <div class="card room-card shadow-lg rounded-4 bg-dark border-0 text-white">
+            <div class="card room-card shadow-lg rounded-4 text-white" style="background-color: #2c2c2c;">
                 @{
                     var mainImage = room.Images?.FirstOrDefault()?.ImageUrl ?? "/images/rooms/placeholder-room.jpg";
                 }
                 <img src="@mainImage" class="card-img-top rounded-top-4" style="height:200px; object-fit:cover;" alt="Room @room.Number" />
-
                 <div class="card-body">
                     <h5 class="card-title fw-bold">@room.Type (Room: @room.Number)</h5>
                     <p class="card-text">Price: @room.Price UAH/night</p>
                     <p class="card-text">Status: @(room.Status == "Free" ? "Available" : "Booked")</p>
-                    <p class="card-text">Capacity: @room.Capacity @(room.Capacity == 1 ? "person" : "people")</p>
                     <a asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-outline-light">Details</a>
+                    <a href="/Reservations" class="btn book-now-btn">Book Now</a>
                     @if (User.IsInRole("Admin"))
                     {
-                    <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
-						<a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
-		            }
+                        <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-warning ms-2">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-danger ms-2">Delete</a>
+                    }
                 </div>
             </div>
         </div>
@@ -33,3 +32,45 @@ else
         <div class="alert alert-light text-center">No rooms available matching your filters.</div>
     </div>
 }
+
+<style>
+    .room-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .room-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+        }
+
+    .book-now-btn {
+        background: linear-gradient(135deg, #c9a14d 0%, #a5823d 100%);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+        transition: all 0.3s ease;
+    }
+
+        .book-now-btn:hover {
+            background: linear-gradient(135deg, #a5823d 0%, #c9a14d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            color: #fff;
+        }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(201, 161, 77, 0.6);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+    }
+</style>

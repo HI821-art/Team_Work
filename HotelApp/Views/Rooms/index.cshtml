@@ -6,39 +6,31 @@
     var selectedType = Context.Request.Query["type"].ToString();
 }
 
-<section class="rooms-section py-4">
-    <div class="container">
-        <h2 class="text-center mb-4 fw-bold text-dark">Our Rooms</h2>
+<section class="rooms-hero-section py-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold rooms-hero-title mb-3">Our Rooms</h1>
+        <p class="lead rooms-hero-subtitle">Check all available rooms and choose your stay</p>
 
-        <!--  нопки Filter та Create New Room -->
-        <div class="d-flex justify-content-between mb-3 align-items-start">
-            <!-- Filter панель -->
-            <div class="container mb-3 p-0">
-                <button class="btn btn-outline-primary mb-3" id="filterBtn">
-                    <i class="bi bi-funnel"></i> Filter
-                </button>
+        <!-- Filter & Create -->
+        <div class="d-flex justify-content-center align-items-start mt-4 gap-3 flex-wrap">
+
+            <div class="filter-wrapper">
+                <button class="btn btn-outline-light mb-2" id="filterBtn"><i class="bi bi-funnel"></i> Filter</button>
 
                 <div class="filter-panel bg-light p-4 rounded-3 shadow-sm">
-                    <form class="row g-3">
-                        <!-- Min Price -->
+                    <form id="filterForm" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label">Min Price</label>
                             <input type="number" name="minPrice" class="form-control" value="@Context.Request.Query["minPrice"]" />
                         </div>
-
-                        <!-- Max Price -->
                         <div class="col-md-3">
                             <label class="form-label">Max Price</label>
                             <input type="number" name="maxPrice" class="form-control" value="@Context.Request.Query["maxPrice"]" />
                         </div>
-
-                        <!-- Guests -->
                         <div class="col-md-3">
                             <label class="form-label">Guests</label>
                             <input type="number" name="capacity" class="form-control" value="@Context.Request.Query["capacity"]" />
                         </div>
-
-                        <!-- Room Type -->
                         <div class="col-md-3">
                             <label class="form-label">Room Type</label>
                             <select name="type" class="form-select">
@@ -49,24 +41,22 @@
                             </select>
                         </div>
 
-                        <!--  нопки Apply / Reset -->
                         <div class="col-12 d-flex gap-2 mt-3">
                             <button type="submit" class="btn btn-primary w-100">Apply</button>
-                            <a href="#" class="btn btn-secondary w-100" id="resetBtn">Reset</a>
+                            <button type="button" class="btn btn-secondary w-100" id="resetBtn">Reset</button>
                         </div>
                     </form>
                 </div>
             </div>
-            
-            <!-- Create New Room -->
+
             @if (User.IsInRole("Admin"))
             {
-				<a asp-action="Create" class="btn btn-primary" style="width:180px;">Create New Room</a>
-			}
+                <a asp-action="Create" class="btn btn-primary align-self-start">Create New Room</a>
+            }
         </div>
 
-        <!-- —писок к≥мнат -->
-        <div class="row" id="roomsContainer">
+        <!-- Rooms Container -->
+        <div class="row mt-4" id="roomsContainer">
             @await Html.PartialAsync("_RoomCards", Model)
         </div>
     </div>
@@ -76,33 +66,108 @@
     <script>
         const filterBtn = document.getElementById('filterBtn');
         const filterPanel = document.querySelector('.filter-panel');
-        const applyBtn = document.querySelector('form button[type="submit"]');
+        const filterForm = document.getElementById('filterForm');
         const resetBtn = document.getElementById('resetBtn');
         const roomsContainer = document.getElementById('roomsContainer');
 
-        // Toggle панель
         filterBtn.addEventListener('click', () => {
             filterPanel.classList.toggle('show');
         });
 
-        // Apply filter
-        applyBtn.addEventListener('click', async (e) => {
+        filterForm.addEventListener('submit', async e => {
             e.preventDefault();
-            const form = e.target.closest('form');
-            const formData = new FormData(form);
+            const formData = new FormData(filterForm);
             const query = new URLSearchParams(formData).toString();
             const response = await fetch(`/Rooms/Filter?${query}`);
-            const html = await response.text();
-            roomsContainer.innerHTML = html;
+            if (response.ok) {
+                const html = await response.text();
+                roomsContainer.innerHTML = html;
+            }
         });
 
-        // Reset filter
-        resetBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        resetBtn.addEventListener('click', async () => {
+            filterForm.reset();
             const response = await fetch(`/Rooms/Filter`);
-            const html = await response.text();
-            roomsContainer.innerHTML = html;
-            document.querySelectorAll('form input, form select').forEach(i => i.value = '');
+            if (response.ok) {
+                const html = await response.text();
+                roomsContainer.innerHTML = html;
+            }
         });
     </script>
 }
+
+<style>
+    .rooms-hero-section {
+        position: relative;
+        min-height: 40vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 50%, #c9a14d 100%);
+        border-radius: 40px;
+    }
+
+        .rooms-hero-section::before, .hero-section::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: -25%;
+        left: -25%;
+        background: rgba(255, 255, 255, 0.05);
+        z-index: 0;
+    }
+
+        .rooms-hero-section::before {
+        transform: rotate(25deg);
+    }
+
+        .rooms-hero-section::after {
+        transform: rotate(-25deg);
+    }
+
+        .rooms-hero-section .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .rooms-hero-title {
+        font-size: 3rem;
+        background: linear-gradient(90deg, #f5d76e, #f39c12);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fadeInDown 1s ease-in-out;
+    }
+
+    .rooms-hero-subtitle {
+        font-size: 1.25rem;
+        color: #f0f0f0;
+        animation: fadeInUp 1.2s ease-in-out;
+    }
+
+    .filter-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .filter-panel {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 500px;
+        max-width: 100%;
+        z-index: 1000;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        color: #000;
+    }
+
+        .filter-panel.show {
+            display: block;
+        }
+</style>
