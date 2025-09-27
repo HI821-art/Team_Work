@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Create User";
+}
+
+<h2>Create User</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Role (optional)</label>
+            <input type="text" name="role" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </form>
